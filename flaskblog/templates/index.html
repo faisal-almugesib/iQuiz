@@ -1,0 +1,83 @@
+
+
+  <!-- =======================================================
+  * Template Name: Bikin
+  * Updated: Sep 18 2023 with Bootstrap v5.3.2
+  * Template URL: https://bootstrapmade.com/bikin-free-simple-landing-page-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+  <script>
+    // Function to check word count in the textarea
+    function checkWordCount() {
+      var textarea = document.getElementById("articleText");
+      var wordCount = textarea.value.trim().split(/\s+/).length;
+      var wordCountFeedback = document.getElementById("wordCountFeedback");
+      var generateQuizButton = document.getElementById("generateQuizButton");
+      var generateSummaryButton = document.getElementById("generateSummaryButton");
+
+      if (wordCount >= 50) {
+          wordCountFeedback.innerHTML = ""; // Clear any previous feedback
+          generateQuizButton.removeAttribute("disabled");
+          generateSummaryButton.removeAttribute("disabled");
+      } else {
+          wordCountFeedback.innerHTML = "Minimum 50 words required.";
+          generateQuizButton.setAttribute("disabled", "disabled");
+          generateSummaryButton.setAttribute("disabled", "disabled");
+      }
+  }
+</script>
+
+<style>
+  /* Style for button container */
+  .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+
+  /* Style for the buttons */
+  .btn-get-started {
+      margin: 0 5px;
+  }
+
+</style>
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+{% extends "layout.html" %}
+{% block content %}
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="d-flex align-items-center">
+
+    <div class="container d-flex flex-column align-items-center justify-content-center" data-aos="fade-up">
+      <h1>Welcome to iQuiz</h1>
+      <h2>Write down your article and generate a quiz or summary for it :)</h2>
+
+      <div style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 10px; margin-bottom: 20px; width: 100%; height: 100px; overflow: auto;">
+        <textarea id="articleText" placeholder="Your text here" style="border: none; width: 100%; height: 100%; resize: vertical;" oninput="checkWordCount();"></textarea>
+      </div>
+      <div id="wordCountFeedback" style="color: red;"></div>
+
+
+      <div class="button-container">
+        <a id="generateQuizButton" href="/quiz" class="btn-get-started scrollto" disabled>Generate quiz</a>
+        <a id="generateSummaryButton" href="/summary" class="btn-get-started scrollto" disabled>Generate summary</a>
+      </div>
+      <img src="static/assets/img/hero-img.png" class="img-fluid hero-img" alt="" data-aos="zoom-in" data-aos-delay="150">
+    </div>
+
+  </section><!-- End Hero -->
+
+  
+
+  
+
+</body>
+
+</html>
+
+{%endblock content%}

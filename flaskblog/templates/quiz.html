@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Quiz</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static',filename='quizStyles.css') }}">
+</head>
+<body>
+    <div class="card">
+        <h1 class="question" id="questionNumber"></h1>
+        <h1 id="currentQuestion"></h1>
+        <form>
+            <label for="option1">
+                <input type="radio" name="answer" id="option1" value="A">
+                <button class="option" type="button" onclick="saveAnswer('1')">Option A</button>
+            </label>
+            <label for="option2">
+                <input type="radio" name="answer" id="option2" value="B">
+                <button class="option" type="button" onclick="saveAnswer('2')">Option B</button>
+            </label>
+            <label for="option3">
+                <input type="radio" name="answer" id="option3" value="C">
+                <button class="option" type="button" onclick="saveAnswer('3')">Option C</button>
+            </label>
+            <label for="option4">
+                <input type="radio" name="answer" id="option4" value="D">
+                <button class="option" type="button" onclick="saveAnswer('4')">Option D</button>
+            </label>
+            <button type="button" id="previousButton" class="navigate" onclick="goToPreviousQuestion()"><</button>
+            <button type="submit" id="submit">Submit</button>
+            <button type="button" id="nextButton" class="navigate" onclick="goToNextQuestion()">></button>
+            
+        </form>
+    </div>
+
+    <script>
+        const questions = [
+            "What is the capital of France?",
+            "Which planet is known as the Red Planet?",
+            "What is the largest mammal?",
+            "What is the tallest mountain in the world?",
+            "Hi"
+        ];
+
+        let currentQuestion = 0;
+        const userAnswers = new Array(questions.length).fill(null); // Initialize with null values
+
+        const questionNumberElement = document.getElementById('questionNumber');
+        const currentQuestionElement = document.getElementById('currentQuestion');
+        const previousButton = document.getElementById('previousButton');
+        const nextButton = document.getElementById('nextButton');
+        const submitButton = document.getElementById('submit');
+
+        function showQuestion() {
+            questionNumberElement.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            currentQuestionElement.textContent = questions[currentQuestion];
+
+            // Check if a choice has been made for the current question
+            if (userAnswers[currentQuestion]) {
+                const selectedOption = document.getElementById(`option${userAnswers[currentQuestion]}`);
+                if (selectedOption) {
+                    selectedOption.checked = true;
+                }
+            } else {
+                // If no choice has been made, clear the selection
+                const radioButtons = document.getElementsByName('answer');
+                for (let i = 0; i < radioButtons.length; i++) {
+                    radioButtons[i].checked = false;
+                }
+            }    
+
+            if (currentQuestion === questions.length - 1) {
+                submitButton.style.visibility = 'visible';
+                nextButton.style.visibility = 'hidden';
+                previousButton.style.visibility = 'visible';
+            } else if (currentQuestion === 0) {
+                submitButton.style.visibility = 'hidden';
+                previousButton.style.visibility = 'hidden';
+                nextButton.style.visibility = 'visible';
+            } else {
+                submitButton.style.visibility = 'hidden';
+                nextButton.style.visibility = 'visible';
+                previousButton.style.visibility = 'visible';
+            }
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        function saveAnswer(choice) {
+            userAnswers[currentQuestion] = choice;
+
+            // Uncheck all other radio buttons in the same group
+            const radioButtons = document.getElementsByName('answer');
+            for (let i = 0; i < radioButtons.length; i++) {
+                if (radioButtons[i].value !== choice) {
+                    radioButtons[i].checked = false;
+                }
+            }
+        }
+
+        // Initial question display
+        showQuestion();
+    </script>
+</body>
+</html>
+{%endblock content%}

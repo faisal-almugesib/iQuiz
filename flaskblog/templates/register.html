@@ -1,0 +1,168 @@
+<html data-bs-theme="light" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" /> <title>Sign Up</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css" /> <link rel="stylesheet" href="assets/css/styles.css" />
+        <style>
+            .divider:after,
+            .divider:before {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+            }
+            .h-custom {
+            height: calc(100% - 73px);
+            }
+            @media (max-width: 450px) {
+            .h-custom {
+            height: 100%;
+            }
+            }
+        </style>
+        
+    </head> 
+    <body>
+      
+      
+      <section class="vh-100">
+        <div class="container-fluid h-custom">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                class="img-fluid" alt="Sample image">
+            </div>
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+              <div class = "container">
+
+                <main role="main" class="container">
+                  <div class="row">
+                    
+                    <!--to print error massage if the information is wrong-->
+                      {%with messages = get_flashed_messages(with_categories=true)%}
+                        {%if messages %}
+                          {%for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                              {{ message }}
+                            </div>
+                          {%endfor%}
+                        {%endif%}
+                      {%endwith%}
+                      {% block content %}{% endblock %}
+                   
+                  </div>
+                </main>
+  
+
+              <form class="text-center" method="POST">
+                {{ form.hidden_tag() }}
+                
+                
+                <div class="mb-3">
+                
+                  {% if form.username.errors %}
+                  <!-- if the user enters invalid input, we will redirect them to this route while the errors will be displayed -->
+                  {{ form.username(class="form-control form-control-lg is-invalid", placeholder="Enter your username") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.username.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+                  {% else %}
+                      {{ form.username(class="form-control form-control-lg", placeholder="Enter your username") }}
+                  {% endif %}
+            
+                  </div>
+
+                <!-- Email input -->
+                <div class="mb-3">
+                  {% if form.email.errors %}
+                      <!-- if the user enters invalid input, we will redirect them to this route while the errors will be displayed -->
+                      {{ form.email(class="form-control form-control-lg is-invalid", placeholder="Enter your email") }}
+                      <div class="invalid-feedback">
+                          {% for error in form.email.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ form.email(class="form-control form-control-lg", placeholder="Enter your email") }}
+                  {% endif %}
+              </div>
+              
+      
+                <!-- Password input -->
+                <div class="mb-3">
+                
+                  {% if form.password.errors %} <!-- if the user enter invalid we will redirect him to this route while the errors will be there so it will be printed -->
+                      {{ form.password(class = "form-control form-control-lg is-invalid") }}
+                      <div class = "invalid-feedback">
+                          {% for error in  form.password.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ form.password(class = "form-control form-control-lg", placeholder="Enter your password" ) }}
+                  {% endif %}
+              </div>
+              <div class="mb-3">
+                {% if form.confirm_password.errors %}
+                    <!-- if the user enters invalid input, we will redirect them to this route while the errors will be displayed -->
+                    {{ form.confirm_password(class="form-control form-control-lg is-invalid", placeholder="Confirm Password") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.confirm_password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.confirm_password(class="form-control form-control-lg", placeholder="Confirm Password") }}
+                {% endif %}
+            </div>
+            
+                <div class="d-flex justify-content-between align-items-center">
+                  
+      
+                
+                  <div class="mb-3">
+                    {{ form.submit(class="btn btn-outline-info", style="margin-left: 260px;") }}
+                </div>
+            </form>
+
+            <!-- Register link -->
+            <div class="register-link" >
+                <p class="small fw-bold mt-2 pt-1 mb-0" style="margin-right: 260px; margin-top: 100px">Already have an account? <a href="login" class="link-danger">Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+                
+      
+              </form>
+            </div>
+            </div>
+          </div>
+        </div>
+        
+          <!-- Right -->
+          <div>
+            <a href="#!" class="text-white me-4">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#!" class="text-white me-4">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#!" class="text-white me-4">
+              <i class="fab fa-google"></i>
+            </a>
+            <a href="#!" class="text-white">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+          <!-- Right -->
+        </div>
+      </section>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+
+    </body> 
+</html>

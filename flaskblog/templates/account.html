@@ -1,0 +1,214 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<script>
+  function confirmDelete() {
+    var result = confirm("Are you sure you want to delete your account? \nThis process cannon be undone!");
+    return result;
+  }
+</script>
+
+
+<div class="container light-style flex-grow-1 container-p-y">
+
+    <h4 class="font-weight-bold py-3 mb-4">
+      Account settings
+    </h4>
+    <main role="main" class="container">
+      <div class="row">
+        
+    
+          
+        
+       
+      </div>
+    </main>
+
+    <div class="card overflow-hidden">
+      <div class="row no-gutters row-bordered row-border-light">
+        <div class="col-md-3 pt-0">
+          <div class="list-group list-group-flush account-settings-links">
+            <a class="list-group-item list-group-item-action active" data-toggle="list" href="#account-general">General</a>
+            <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-change-password">Change password</a>
+            <a class="list-group-item list-group-item-action" data-toggle="list" href="#delete-account">Delete your account</a>
+            
+            
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="tab-content">
+            <div class="tab-pane fade active show" id="account-general">
+
+              
+              <hr class="border-light m-0">
+
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Current Username: {{ user.username }}</label>
+                  <form class="text-center" method="POST">
+                    {{ form1.hidden_tag() }}
+                    
+                    
+                    <div class="mb-3">
+
+                      {% if form1.username.errors %}
+                      
+                      {{ form1.username(class="form-control form-control-lg is-invalid", placeholder="Enter your new username") }}
+                      <div class="invalid-feedback">
+                          {% for error in form1.username.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                      {% else %}
+                          {{ form1.username(class="form-control form-control-lg", placeholder="Enter your new username") }}
+                      {% endif %}
+                
+                      </div>
+                      <div class="mb-3">
+                        {{ form1.submit(class="btn btn-danger", style="margin-left: 10px") }}
+                    </div>
+                  </form>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Current Email: {{ user.email }}</label>
+                  <form class="text-center" method="POST">
+                    {{ form2.hidden_tag() }}
+                 
+                  <div class="mb-3">
+                    {% if form2.email.errors %}
+                        <!-- if the user enters invalid input, we will redirect them to this route while the errors will be displayed -->
+                        {{ form2.email(class="form-control form-control-lg is-invalid", placeholder="Enter your new email") }}
+                        <div class="invalid-feedback">
+                            {% for error in form2.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form2.email(class="form-control form-control-lg", placeholder="Enter your new email") }}
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                  {{ form2.submit(class="btn btn-danger", style="margin-left: 10px") }}
+              </div>
+            </form>
+                
+                </div>
+                
+              </div>
+
+            </div>
+            <div class="tab-pane fade" id="account-change-password">
+              <div class="card-body pb-2">
+
+                <div class="form-group">
+                  <form class="text-center" method="POST">
+                    {{ form3.hidden_tag() }}
+                    <div class="mb-3">
+                        {% if form3.oldpassword.errors %}
+                            {{ form3.oldpassword(class="form-control form-control-lg is-invalid", placeholder="Enter your password") }}
+                            <div class="invalid-feedback">
+                                {% for error in form3.oldpassword.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form3.oldpassword(class="form-control form-control-lg", placeholder="Enter your password") }}
+                        {% endif %}
+                    </div>
+
+
+                    <div class="mb-3">
+                
+                      {% if form3.newpassword.errors %} <!-- if the user enter invalid we will redirect him to this route while the errors will be there so it will be printed -->
+                          {{ form3.newpassword(class = "form-control form-control-lg is-invalid", placeholder="Enter your new password" ) }}
+                          <div class = "invalid-feedback">
+                              {% for error in  form3.newpassword.errors %}
+                                  <span>{{ error }}</span>
+                              {% endfor %}
+                          </div>
+                      {% else %}
+                          {{ form3.newpassword(class = "form-control form-control-lg", placeholder="Enter your new password" ) }}
+                      {% endif %}
+                  </div>
+
+                  <div class="mb-3">
+                    {% if form3.confirm_newpassword.errors %}
+                        <!-- if the user enters invalid input, we will redirect them to this route while the errors will be displayed -->
+                        {{ form3.confirm_newpassword(class="form-control form-control-lg is-invalid", placeholder="Confirm the new password") }}
+                        <div class="invalid-feedback">
+                            {% for error in form3.confirm_newpassword.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form3.confirm_newpassword(class="form-control form-control-lg", placeholder="Confirm the new password") }}
+                    {% endif %}
+                </div>
+
+                    <div class="mb-3">
+                        {{ form3.submit(class="btn btn-danger", style="margin-left: 10px") }}
+                    </div>
+                  </form>
+                </div>
+                
+              </div>
+            </div>
+            
+            <div class="tab-pane fade" id="delete-account">
+              <div class="card-body pb-2">
+
+                <div class="form-group">
+                  <!-- Password input -->
+                  <form class="text-center" method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {% if form.password.errors %}
+                            {{ form.password(class="form-control form-control-lg is-invalid", placeholder="Enter your password") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.password(class="form-control form-control-lg", placeholder="Enter your password") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.submit(class="btn btn-danger", style="margin-left: 10px",onclick="return confirmDelete()") }}
+                    </div>
+                  </form>
+                </div>
+                
+
+              </div>
+            </div>
+            
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="text-right mt-3">
+      
+  <!--  
+      <button id = "confirm" class="btn btn-outline-info"></button>
+      <script>
+        var deleteAccountPageElement = document.getElementById("delete-account");
+
+        if (deleteAccountPageElement) {
+           document.getElementById("confirm").innerText = "Delete";
+        } 
+        else{
+            document.getElementById("confirm").innerText = "Save changes";
+        }
+      </script>
+      <button type="button" class="btn btn-default">Cancel</button>
+    </div>
+  -->
+  </div>
+  </div>
+{%endblock content%}
