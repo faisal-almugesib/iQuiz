@@ -16,20 +16,17 @@
         <form>
             <label for="option1" style="display: block;">
                 <input type="radio" name="answer" id="option1" value="A">
-                <button class="option" type="button" onclick="saveAnswer('1')">Option A</button>
+                <button class="option" type="button" onclick="saveAnswer('1')" id="optionA">Option A</button>
             </label>
             <label for="option2" style="display: block;">
                 <input type="radio" name="answer" id="option2" value="B">
-                <button class="option" type="button" onclick="saveAnswer('2')">Option B</button>
+                <button class="option" type="button" onclick="saveAnswer('2')" id="optionB">Option B</button>
             </label>
             <label for="option3" style="display: block;">
                 <input type="radio" name="answer" id="option3" value="C">
-                <button class="option" type="button" onclick="saveAnswer('3')">Option C</button>
+                <button class="option" type="button" onclick="saveAnswer('3')" id="optionC">Option C</button>
             </label>
-            <label for="option4" style="display: block;">
-                <input type="radio" name="answer" id="option4" value="D">
-                <button class="option" type="button" onclick="saveAnswer('4')">Option D</button>
-            </label>
+            
             <button type="button" id="previousButton" class="navigate" onclick="goToPreviousQuestion()"><</button>
             <button type="submit" id="submit">Submit</button>
             <button type="button" id="nextButton" class="navigate" onclick="goToNextQuestion()">></button>
@@ -37,6 +34,23 @@
         </form>
     </div>
 
+    <script>
+        var questionsData = [
+            {% for question in questions %}
+                {
+                    question: "{{ question.question|safe }}",
+                    options: [
+                        "{{ question.options[0]|safe }}",
+                        "{{ question.options[1]|safe }}",
+                        "{{ question.options[2]|safe }}"
+                    ]
+                },
+            {% endfor %}
+        ];
+
+        // JavaScript code to work with questionsData
+        console.log(questionsData); // For demonstration purposes
+    </script>
     <script>
         const questions = [
             "What is the capital of France?",
@@ -54,10 +68,21 @@
         const previousButton = document.getElementById('previousButton');
         const nextButton = document.getElementById('nextButton');
         const submitButton = document.getElementById('submit');
-
+        const option1Element = document.getElementById('optionA');
+        const option2Element = document.getElementById('optionB');
+        const option3Element = document.getElementById('optionC');
+        
         function showQuestion() {
             questionNumberElement.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
-            currentQuestionElement.textContent = questions[currentQuestion];
+            currentQuestionElement.textContent = questionsData[currentQuestion].question;
+            if (questionsData[currentQuestion]) {
+                const options =  questionsData[currentQuestion].options;
+            
+                option1Element.textContent = options[0];
+                option2Element.textContent = options[1];
+                option3Element.textContent = options[2];
+                
+            }
 
             // Check if a choice has been made for the current question
             if (userAnswers[currentQuestion]) {

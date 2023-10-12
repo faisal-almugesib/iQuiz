@@ -4,6 +4,9 @@ from flaskblog.forms import RegistrationForm, LoginForm, DeleteForm, EditEmailFo
 from flaskblog.modelss import User, Article
 from flaskblog import db
 from flask_login import login_user, login_required, logout_user, current_user
+import json
+import openai
+from flask import jsonify
 
 
 
@@ -40,15 +43,13 @@ def add_article():
         db.session.commit()
         
         button_id = request.form.get('button_id')
-        print("-----------------------------------------------------------------------------------------------------------")
-        print(button_id)
-        print("-----------------------------------------------------------------------------------------------------------")
+       
         if button_id == 'generateQuizButton':
-            return redirect(url_for('quiz')) 
+            return redirect(url_for('quiz', article=request.form['articleText'])) 
         elif button_id == 'generateSummaryButton': 
             return redirect(url_for('summary'))
         else:
-             return redirect(url_for('account'))
+             return redirect(url_for('home'))
 
 
 
@@ -180,7 +181,61 @@ def account():
 @app.route("/quiz", methods=['GET','POST'])
 @login_required
 def quiz():
-    return render_template('quiz.html', user=current_user)
+
+    openai.api_key = ""
+
+    text = request.args.get('article')
+    text = text.strip()
+
+    prompt = f"Generate 10 multiple choice questions and exactly 3 answers choices based on the following article:\n\n{text}\n\n1. "
+
+    response = openai.Completion.create(
+                engine="text-davinci-002",
+                prompt=prompt,
+                max_tokens=600,  # You can adjust this based on your needs
+                n = 10,  # Number of questions to generate
+                stop=None,
+                temperature=0.7  # You can adjust this for creativity
+            )
+    questions = []
+
+    for i, item in enumerate(response.choices):
+        text = item.text.strip().split('\n')
+        cleaned_text = [line.strip() for line in text if line.strip()]
+
+    t= False
+    if cleaned_text[4] == "2.":#set boolen if there is /n after the question number to jump it always
+        t= True    
+ 
+    j=0
+    while j < len(cleaned_text) - 3:
+        question_text = cleaned_text[j]
+
+        answer_options = cleaned_text[j+1:j+4]
+
+        questions.append({
+            "question": question_text,
+            "options": answer_options
+        })
+
+        j += 4
+        #correct_answer = answer_options[0].strip()  # The first option is the correct answer
+        #options = [option.strip() for j, option in enumerate(answer_options)]
+        #j+=4
+        if t:
+            j+=1
+    ''' 
+    \\this code to print the questions  in the terminal
+    print("\n----------------------------------------------------------------------------------------------------------\n")
+    for index, q in enumerate(questions):
+        #print(f"Question{index + 1}: {q['question']}")
+        print(q['question'])
+        for i,a in enumerate(q['options']):
+            print(a)
+        print("\n")
+    '''
+    return render_template('quiz.html', user=current_user, questions=questions)
+
 
 @app.route("/summary", methods=['GET','POST'])
 @login_required
