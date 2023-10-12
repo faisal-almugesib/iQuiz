@@ -1,7 +1,7 @@
-from flask import render_template,url_for, flash, redirect
+from flask import render_template,url_for, flash, redirect, request
 from flaskblog import app
 from flaskblog.forms import RegistrationForm, LoginForm, DeleteForm, EditEmailForm, EditNameForm, ChangePassword
-from flaskblog.modelss import User, Post
+from flaskblog.modelss import User, Article
 from flaskblog import db
 from flask_login import login_user, login_required, logout_user, current_user
 
@@ -26,6 +26,32 @@ posts = [ {'author': 'Faisal',
 @login_required
 def home():
     return render_template('index.html', user=current_user)  #posts=posts 
+
+@app.route('/add_article', methods=['POST'])
+def add_article():
+    if request.method == 'POST':
+        # Get the user ID based on your authentication method
+        user_id = current_user.id 
+        # Create a new article and populate its attributes
+        new_article = Article(content=request.form['articleText'], user_id=user_id)
+        
+        # Add the article to the database and commit the changes
+        db.session.add(new_article)
+        db.session.commit()
+        
+        button_id = request.form.get('button_id')
+        print("-----------------------------------------------------------------------------------------------------------")
+        print(button_id)
+        print("-----------------------------------------------------------------------------------------------------------")
+        if button_id == 'generateQuizButton':
+            return redirect(url_for('quiz')) 
+        elif button_id == 'generateSummaryButton': 
+            return redirect(url_for('summary'))
+        else:
+             return redirect(url_for('account'))
+
+
+
 
 @app.route("/about")
 def about():
@@ -155,3 +181,8 @@ def account():
 @login_required
 def quiz():
     return render_template('quiz.html', user=current_user)
+
+@app.route("/summary", methods=['GET','POST'])
+@login_required
+def summary():
+    return render_template('summary.html', user=current_user)

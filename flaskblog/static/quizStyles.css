@@ -8,6 +8,7 @@ body {
     margin: 0;
 }
 
+/*
 .card {
     background-color: #fff;
     border-radius: 8px;
@@ -15,6 +16,22 @@ body {
     padding: 20px;
     text-align: center;
     width: 400px;
+    overflow: hidden; 
+}
+*/
+
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    width: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Additional CSS styles for the centered content go here */
 }
 
 .question {
@@ -33,6 +50,20 @@ body {
     cursor: pointer;
     transition: transform 0.3s ease, border-color 0.3s ease;
     border: 2px solid transparent;
+    
+    /*
+    if it long remove the extended part and puts ...
+
+    white-space: nowrap; /* Prevents line breaks in button text *
+    overflow: hidden; /* Hides overflowing text *
+    text-overflow: ellipsis; /* Adds ellipsis (...) to indicate text overflow *
+    max-width: 100%; /* Ensures the button doesn't exceed card width *
+    */
+
+    
+    white-space: normal; /* Allow text to wrap to multiple lines */
+    word-wrap: break-word; /* Allow long words to break onto the next line */
+    max-width: 100%; /* Ensures the button doesn't exceed card width */
 }
 
 .option:hover {
@@ -61,7 +92,7 @@ input[type="radio"]:checked + .option {
 
 button[type="submit"] {
     visibility:"";
-    background-color: #525fff;
+    background-color: #3b4ef8;;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -72,13 +103,13 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #6e6eff; 
+    background-color: #0a22f6; 
 }
 
 
 .navigate {
     visibility:"";
-    background-color: #525fff;
+    background-color: #3b4ef8;;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -89,5 +120,5 @@ button[type="submit"]:hover {
 }
 
 .navigate:hover {
-    background-color: #6e6eff; /* Lighter color on hover */
+    background-color: #0a22f6; /* Lighter color on hover */
 }
