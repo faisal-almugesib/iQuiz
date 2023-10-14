@@ -1,7 +1,7 @@
 from flask import render_template,url_for, flash, redirect, request
 from flaskblog import app
-from flaskblog.forms import RegistrationForm, LoginForm, DeleteForm, EditEmailForm, EditNameForm, ChangePassword
-from flaskblog.modelss import User, Article
+from flaskblog.forms import RegistrationForm, LoginForm, DeleteForm, EditEmailForm, EditNameForm, ChangePassword, AddDateForm
+from flaskblog.modelss import User, Article, Exam, user_exam
 from flaskblog import db
 from flask_login import login_user, login_required, logout_user, current_user
 import json
@@ -241,3 +241,45 @@ def quiz():
 @login_required
 def summary():
     return render_template('summary.html', user=current_user)
+
+
+
+@app.route("/calendar", methods=['GET','POST'])
+@login_required
+def calendar():
+    exams = []
+    for exam in current_user.exams:
+        temp = {"course" : exam.course,
+                "date"   : exam.date
+                }
+        exams.append(temp)
+    return render_template('calendar.html', user=current_user, exams=exams)
+
+
+@app.route("/addDate", methods=['GET','POST'])
+@login_required
+def addDate():
+    form = AddDateForm()
+    
+    if form.validate_on_submit():
+        new_exam = Exam(date= form.date.data, course = form.course.data)
+        #user = User.query.filter_by(username=current_user.username).first()
+        #db.session.delete(user)
+        #user.exams.append(new_exam)
+        
+        exam = Exam.query.filter_by(date=form.date.data, course=form.course.data).first()
+        flag = False
+        #for exam in current_user.exams:
+               # if new_exam.date == exam.date and new_exam.course == exam.course:
+                    #flag = True
+        if exam or flag:
+            flash('exam already exist', 'danger')
+
+        else:
+            current_user.exams.append(new_exam)    
+            db.session.add(new_exam)
+            db.session.commit()
+            flash(f'Exam date added for {current_user.username}!',category='success')
+            return redirect(url_for('calendar'))
+        
+    return render_template('addDate.html',title='addDate', form=form, user=current_user)
