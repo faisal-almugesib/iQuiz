@@ -62,10 +62,14 @@
             <input type="hidden" id="button_id" name="button_id" value="">
             <div class="button-container">
                 <a href="/addDate">
-                    <button type="submit" id="generateQuizButton" class="btn-get-started scrollto " style="outline: none; display: block;" >Add an exam date</button>
+                    <button type="submit" id="generateQuizButton" class="btn-get-started scrollto " style="outline: none; display: block;position: absolute;
+                    top: 30%;
+                    left: 50%;" >Add an exam date</button>
                 </a>
                 
-                <div class = "exam-list" style = "">
+                <div class = "exam-list" style = "position: absolute;
+                top: 40%;
+                left: 50%;">
                     <div class="question">Upcoming Exams</div>
                     <ul class="exam-list">
                         {% for exam in exams %}
