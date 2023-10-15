@@ -1,0 +1,98 @@
+<head>
+
+    <style>
+      /* Style for button container */
+      .button-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+      }
+    
+      /* Style for the buttons */
+      .btn-get-started {
+          margin: 0 5px;
+          
+      }
+      /* Calendar-specific styles */
+    .calendar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .calendar .day {
+        width: 40px;
+        height: 40px;
+        border: 2px solid transparent;
+        border-radius: 50%;
+        margin: 5px;
+        cursor: pointer;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .calendar .day:hover {
+        transform: scale(0.95);
+        border-color: #000;
+    }
+    
+    .calendar .day.selected {
+        background-color: #3b4ef8;
+        color: #fff;
+        border-color: #3b4ef8;
+    }
+    
+    </style>
+    </head>
+    
+    <body>
+    
+      <!-- ======= Header ======= -->
+    {% extends "layout.html" %}
+    {% block content %}
+    <br><br><br><br><br>
+      <!-- ======= Hero Section ======= -->
+      <form class="text-center" method="POST">
+        {{ form.hidden_tag() }}
+    
+        <!-- Email input -->
+        <div class="mb-3">
+            {% if form.course.errors %}
+                {{ form.course(class="form-control form-control-lg is-invalid", placeholder="Enter your the name of the course") }}
+                <div class="invalid-feedback">
+                    {% for error in form.course.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.course(class="form-control form-control-lg", placeholder="Enter your the name of the course") }}
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            {% if form.date.errors %}
+                {{ form.date(class="form-control form-control-lg is-invalid calendar") }}
+                <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.date(class="form-control form-control-lg calendar") }}
+            {% endif %}
+        </div>
+        
+    
+        <div class="mb-3">
+            {{ form.addDate(class="btn btn-outline-info", style="margin-left: 10px") }}
+        </div>
+    </form>
+    
+      
+    
+    </body>
+    
+    </html>
+    
+    {%endblock content%}
