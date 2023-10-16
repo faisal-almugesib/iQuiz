@@ -1,99 +1,132 @@
-    <head>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='quizStyles.css') }}">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='quizStyles.css') }}">
+    
+    <style>
+    /* Style for button container */
+    .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         
-        <style>
-        /* Style for button container */
-        .button-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+    }
+    
+    /* Style for the buttons */
+    .btn-get-started {
+        margin: 0 5px;
+    }
+    .exam-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    .exam {
+        border: 2px solid transparent;
+        border-radius: 4px;
+        margin: 10px;
+        padding: 10px;
+        cursor: pointer;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .exam:hover {
+        transform: scale(0.95);
+        border-color: #000;
+    }
+    
+    .course {
+        font-weight: bold;
+    }
+    
+    .date {
+        color: #555;
+    }
+    
+    .today{
+        color: red;
+    }
+
+    .one-day{
+        color: orange;
+    }
+
+    </style>
+    </head>
+    
+    <body>
+    
+    <!-- ======= Header ======= -->
+    {% extends "layout.html" %}
+    {% block content %}
+    
+    <!-- ======= Hero Section ======= -->
+    <section id="hero" class="d-flex align-items-center">
+    
+        <div class="container d-flex flex-column align-items-center justify-content-center" data-aos="fade-up">
+        
+        <h2 style = "position: absolute;
+        top: 25%;
+        left: 50%;">You can add an exam date or check any upcoming one</h2>
+    
+        
+        <input type="hidden" id="button_id" name="button_id" value="">
+        <div class="button-container">
+            <a href="/addDate">
+                <button type="submit" id="generateQuizButton" class="btn-get-started scrollto " style="outline: none; display: block;position: absolute;
+                top: 30%;
+                left: 50%;" >Add an exam date</button>
+            </a>
             
-        }
-        
-        /* Style for the buttons */
-        .btn-get-started {
-            margin: 0 5px;
-        }
-        .exam-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        
-        .exam {
-            border: 2px solid transparent;
-            border-radius: 4px;
-            margin: 10px;
-            padding: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-        
-        .exam:hover {
-            transform: scale(0.95);
-            border-color: #000;
-        }
-        
-        .course {
-            font-weight: bold;
-        }
-        
-        .date {
-            color: #555;
-        }
-        </style>
-        </head>
-        
-        <body>
-        
-        <!-- ======= Header ======= -->
-        {% extends "layout.html" %}
-        {% block content %}
-        
-        <!-- ======= Hero Section ======= -->
-        <section id="hero" class="d-flex align-items-center">
-        
-            <div class="container d-flex flex-column align-items-center justify-content-center" data-aos="fade-up">
-            
-            <h2 style = "position: absolute;
-            top: 25%;
-            left: 50%;">You can add an exam date or check any upcoming one</h2>
-        
-            
-            <input type="hidden" id="button_id" name="button_id" value="">
-            <div class="button-container">
-                <a href="/addDate">
-                    <button type="submit" id="generateQuizButton" class="btn-get-started scrollto " style="outline: none; display: block;position: absolute;
-                    top: 30%;
-                    left: 50%;" >Add an exam date</button>
-                </a>
-                
-                <div class = "exam-list" style = "position: absolute;
-                top: 40%;
-                left: 50%;">
-                    <div class="question">Upcoming Exams</div>
-                    <ul class="exam-list">
-                        {% for exam in exams %}
-                        <li class="exam">
-                            <div class="course">{{ exam.course }}</div>
-                            <div class="date">{{ exam.date }}</div>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </div>
-                
-            
+            <div class = "exam-list" style = "position: absolute;
+            top: 40%;
+            left: 50%;">
+                <div class="question">Upcoming Exams</div>
+                {% if not exams %}
+                    You don't have any upcoming exams
+                {% endif %}
+                <ul class="exam-list">
+                    {% for exam in exams %}
+                    {% set remaining_days = (exam.date - current_date).days  %}
+                    {% if remaining_days >= 0 %}
+                    <li class="exam">
+                        <div class="course">{{ exam.course }}</div>
+                        <div class="date">{{ exam.date }}</div>
+                        {% if remaining_days <= 2 %}
+                            
+                                {% if remaining_days == 0 %}
+                                <div class="today">
+                                    Today is your exam good luck!
+                                </div>
+                                {% elif remaining_days == 1 %}
+                                <div class="one-day">
+                                    Tomorrow is your exam, practice some quizzes in our home page!
+                                </div>
+                                {% elif remaining_days == 2 %}
+                                <div class="two-days">
+                                    2 days left for your exam
+                                </div>
+                                {% endif %}
+                            
+                        {% endif %}
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
             </div>
-            <img src="static/assets/img/hero-img.png" class="img-fluid hero-img" alt="" data-aos="zoom-in" data-aos-delay="150">
-            </div>
+
+            
         
-        </section><!-- End Hero -->
-        
-        
-        
-        
-        
-        </body>
-        
-        </html>
-        
-        {%endblock content%}
+        </div>
+        <img src="static/assets/img/hero-img.png" class="img-fluid hero-img" alt="" data-aos="zoom-in" data-aos-delay="150">
+        </div>
+    
+    </section><!-- End Hero -->
+    
+    
+    
+    
+    
+    </body>
+    
+    </html>
+    
+    {%endblock content%}
