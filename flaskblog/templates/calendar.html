@@ -76,10 +76,29 @@
                         <li class="exam">
                             <div class="course">{{ exam.course }}</div>
                             <div class="date">{{ exam.date }}</div>
+                            {% set remaining_days = (exam.date - current_date).days  %}
+                            {% if remaining_days <= 2 %}
+                                <div class="remaining-days">
+                                    {% if remaining_days == 0 %}
+                                    <div class="remaining-days">
+                                        Today is your exam good luck!
+                                    </div>
+                                    {% elif remaining_days == 1 %}
+                                    <div class="remaining-days">
+                                        Tomorrow is your exam, practice some quizzes in our home page!
+                                    </div>
+                                    {% elif remaining_days == 2 %}
+                                    <div class="remaining-days">
+                                        2 days left for your exam
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                         </li>
                     {% endfor %}
                     </ul>
                 </div>
+
                 
             
             </div>

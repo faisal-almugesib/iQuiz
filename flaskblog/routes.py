@@ -7,6 +7,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 import json
 import openai
 from flask import jsonify
+import datetime
 
 
 
@@ -253,7 +254,8 @@ def calendar():
                 "date"   : exam.date
                 }
         exams.append(temp)
-    return render_template('calendar.html', user=current_user, exams=exams)
+    current_date = datetime.date.today()
+    return render_template('calendar.html', user=current_user, exams=exams, current_date=current_date)
 
 
 @app.route("/addDate", methods=['GET','POST'])
