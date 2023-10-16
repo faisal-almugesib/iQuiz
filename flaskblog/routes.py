@@ -254,8 +254,18 @@ def calendar():
                 "date"   : exam.date
                 }
         exams.append(temp)
+    sorted_exams = sorted(exams, key=lambda x: x["date"]) #sort the exams from the closest date, the first argument is the directory we want to sort, the second one is the key, we defined a function using lambda that gets the date for each element
+    '''
+    lambda is like defining a method we could sort it like that
+    # Define a custom sorting function to extract the date from a dictionary
+    def get_date(item):
+        return item["date"]
+
+    # Sort the 'exams' list using the custom sorting function
+    sorted_exams = sorted(exams, key=get_date)
+    '''
     current_date = datetime.date.today()
-    return render_template('calendar.html', user=current_user, exams=exams, current_date=current_date)
+    return render_template('calendar.html', user=current_user, exams=sorted_exams, current_date=current_date)
 
 
 @app.route("/addDate", methods=['GET','POST'])
