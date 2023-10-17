@@ -61,7 +61,7 @@
         ];
 
         let currentQuestion = 0;
-        const userAnswers = new Array(questions.length).fill(null); // Initialize with null values
+        const userAnswers = new Array(questionsData.length).fill(null); // Initialize with null values
 
         const questionNumberElement = document.getElementById('questionNumber');
         const currentQuestionElement = document.getElementById('currentQuestion');
@@ -73,7 +73,7 @@
         const option3Element = document.getElementById('optionC');
         
         function showQuestion() {
-            questionNumberElement.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            questionNumberElement.textContent = `Question ${currentQuestion + 1} of ${questionsData.length}`;
             currentQuestionElement.textContent = questionsData[currentQuestion].question;
             if (questionsData[currentQuestion]) {
                 const options =  questionsData[currentQuestion].options;
@@ -98,7 +98,7 @@
                 }
             }    
 
-            if (currentQuestion === questions.length - 1) {
+            if (currentQuestion === questionsData.length - 1) {
                 submitButton.style.visibility = 'visible';
                 nextButton.style.visibility = 'hidden';
                 previousButton.style.visibility = 'visible';
@@ -121,7 +121,7 @@
         }
 
         function goToNextQuestion() {
-            if (currentQuestion < questions.length - 1) {
+            if (currentQuestion < questionsData.length - 1) {
                 currentQuestion++;
                 showQuestion();
             }

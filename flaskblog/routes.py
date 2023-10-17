@@ -7,7 +7,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 import json
 import openai
 from flask import jsonify
-
+import datetime
 
 
 '''
@@ -47,7 +47,7 @@ def add_article():
         if button_id == 'generateQuizButton':
             return redirect(url_for('quiz', article=request.form['articleText'])) 
         elif button_id == 'generateSummaryButton': 
-            return redirect(url_for('summary'))
+            return redirect(url_for('summary', article=request.form['articleText']))
         else:
              return redirect(url_for('home'))
 
@@ -224,8 +224,8 @@ def quiz():
         #j+=4
         if t:
             j+=1
-    ''' 
-    \\this code to print the questions  in the terminal
+    '''
+    #this code to print the questions  in the terminal
     print("\n----------------------------------------------------------------------------------------------------------\n")
     for index, q in enumerate(questions):
         #print(f"Question{index + 1}: {q['question']}")
@@ -240,7 +240,33 @@ def quiz():
 @app.route("/summary", methods=['GET','POST'])
 @login_required
 def summary():
-    return render_template('summary.html', user=current_user)
+    openai.api_key = ""
+
+    text = request.args.get('article')
+    text = text.strip()
+
+    prompt = f"Summarize the following article: {text}"
+
+    
+    response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=prompt,
+                max_tokens=600,  # You can adjust this based on your needs
+                #n = 10,  # Number of questions to generate
+                stop=None,
+                temperature=0.7  # You can adjust this for creativity
+            )
+    '''
+    response = openai.Completion.create(
+    engine="davinci",
+    prompt=prompt,
+    max_tokens=600,  # Adjust the number of tokens for your desired summary length
+)'''
+
+# Get and print the generated summary
+    summary = response.choices[0].text
+   
+    return render_template('summary.html', user=current_user, summary=summary)
 
 
 
@@ -253,7 +279,18 @@ def calendar():
                 "date"   : exam.date
                 }
         exams.append(temp)
-    return render_template('calendar.html', user=current_user, exams=exams)
+    sorted_exams = sorted(exams, key=lambda x: x["date"]) #sort the exams from the closest date, the first argument is the directory we want to sort, the second one is the key, we defined a function using lambda that gets the date for each element
+    '''
+    lambda is like defining a method we could sort it like that
+    # Define a custom sorting function to extract the date from a dictionary
+    def get_date(item):
+        return item["date"]
+
+    # Sort the 'exams' list using the custom sorting function
+    sorted_exams = sorted(exams, key=get_date)
+    '''
+    current_date = datetime.date.today()
+    return render_template('calendar.html', user=current_user, exams=sorted_exams, current_date=current_date)
 
 
 @app.route("/addDate", methods=['GET','POST'])
