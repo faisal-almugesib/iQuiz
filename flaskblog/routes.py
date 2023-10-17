@@ -183,17 +183,17 @@ def account():
 @login_required
 def quiz():
 
-    openai.api_key = ""
+    openai.api_key = "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"
 
     text = request.args.get('article')
     text = text.strip()
 
-    prompt = f"Generate 10 multiple choice questions and exactly 3 answers choices based on the following article:\n\n{text}\n\n1. "
+    prompt = f"\n\n{text}\nGenerate 10 multiple choice questions that covers the whole provided article and exactly 3 answers choices based on the following article:: number of the question. the question that covers the article.\n a) choice A \n b) choice B \n c) choice C. "
 
     response = openai.Completion.create(
                 engine="text-davinci-002",
                 prompt=prompt,
-                max_tokens=600,  # You can adjust this based on your needs
+                max_tokens=3000,  # You can adjust this based on your needs
                 n = 10,  # Number of questions to generate
                 stop=None,
                 temperature=0.7  # You can adjust this for creativity
@@ -241,7 +241,7 @@ def quiz():
 @app.route("/summary", methods=['GET','POST'])
 @login_required
 def summary():
-    openai.api_key = ""
+    openai.api_key = "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"
 
     text = request.args.get('article')
     text = text.strip()
@@ -252,7 +252,7 @@ def summary():
     response = openai.Completion.create(
                 engine="text-davinci-003",
                 prompt=prompt,
-                max_tokens=600,  # You can adjust this based on your needs
+                max_tokens=3000,  # You can adjust this based on your needs
                 #n = 10,  # Number of questions to generate
                 stop=None,
                 temperature=0.7  # You can adjust this for creativity
