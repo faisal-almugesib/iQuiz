@@ -70,15 +70,15 @@ class ChangePassword(FlaskForm):
     
     submit =SubmitField('Change')
 
-
+'''
 def validate_date(form, field):
     if field.data < date.today():
         raise ValidationError('Date cannot be in the past.')
-
+'''
 class AddDateForm(FlaskForm):   
 
     date = DateField('Date',
-                            validators=[DataRequired(), validate_date])
+                            validators=[DataRequired()])
     course = StringField('Course',
                            validators=[DataRequired()]) 
     addDate =SubmitField('Add date')

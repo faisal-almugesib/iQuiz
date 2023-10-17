@@ -299,24 +299,27 @@ def addDate():
     form = AddDateForm()
     
     if form.validate_on_submit():
-        new_exam = Exam(date= form.date.data, course = form.course.data)
-        #user = User.query.filter_by(username=current_user.username).first()
-        #db.session.delete(user)
-        #user.exams.append(new_exam)
-        
-        exam = Exam.query.filter_by(date=form.date.data, course=form.course.data).first()
-        flag = False
-        #for exam in current_user.exams:
-               # if new_exam.date == exam.date and new_exam.course == exam.course:
-                    #flag = True
-        if exam or flag:
-            flash('exam already exist', 'danger')
-
+        if form.date.data<datetime.date.today():
+            flash('Date cannot be in the past.', 'danger')
         else:
-            current_user.exams.append(new_exam)    
-            db.session.add(new_exam)
-            db.session.commit()
-            flash(f'Exam date added for {current_user.username}!',category='success')
-            return redirect(url_for('calendar'))
+            new_exam = Exam(date= form.date.data, course = form.course.data)
+            #user = User.query.filter_by(username=current_user.username).first()
+            #db.session.delete(user)
+            #user.exams.append(new_exam)
+            
+            exam = Exam.query.filter_by(date=form.date.data, course=form.course.data).first()
+            flag = False
+            #for exam in current_user.exams:
+                # if new_exam.date == exam.date and new_exam.course == exam.course:
+                        #flag = True
+            if exam or flag:
+                flash('exam already exist', 'danger')
+
+            else:
+                current_user.exams.append(new_exam)    
+                db.session.add(new_exam)
+                db.session.commit()
+                flash(f'Exam date added for {current_user.username}!',category='success')
+                return redirect(url_for('calendar'))
         
     return render_template('addDate.html',title='addDate', form=form, user=current_user)
