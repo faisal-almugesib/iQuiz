@@ -59,14 +59,14 @@
         <!-- Email input -->
         <div class="mb-3">
             {% if form.course.errors %}
-                {{ form.course(class="form-control form-control-lg is-invalid", placeholder="Enter your the name of the course") }}
+                {{ form.course(class="form-control form-control-lg is-invalid", placeholder="Enter exam name") }}
                 <div class="invalid-feedback">
                     {% for error in form.course.errors %}
                         <span>{{ error }}</span>
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.course(class="form-control form-control-lg", placeholder="Enter your the name of the course") }}
+                {{ form.course(class="form-control form-control-lg", placeholder="Enter exam name") }}
             {% endif %}
         </div>
         

@@ -106,8 +106,9 @@ def logout():
 
 
 @app.route("/account", methods=['GET','POST'])
-
+@login_required
 def account():
+
     form = DeleteForm()
     form1 = EditNameForm()
     form2 = EditEmailForm()
