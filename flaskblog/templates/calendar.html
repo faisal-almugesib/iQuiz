@@ -83,13 +83,21 @@
                 {% if not exams %}
                     You don't have any upcoming exams
                 {% endif %}
+                <form>
                 <ul class="exam-list">
                     {% for exam in exams %}
                     {% set remaining_days = (exam.date - current_date).days  %}
                     {% if remaining_days >= 0 %}
-                    <li class="exam">
+                    <button class="option" type="button"  id="option_{{ loop.index }}">
+                    <li >
+                       
+                        <label for="exam_{{ loop.index }}">
+                        <input type="check" name="delete_exams" value="{{ exam.course }}" id="exam_{{ loop.index }}">
+                        
+                        
                         <div class="course">{{ exam.course }}</div>
                         <div class="date">{{ exam.date }}</div>
+                    
                         {% if remaining_days <= 2 %}
                             
                                 {% if remaining_days == 0 %}
@@ -107,10 +115,13 @@
                                 {% endif %}
                             
                         {% endif %}
+                        </label>
                     </li>
+                </button>
                     {% endif %}
                 {% endfor %}
                 </ul>
+            </form>
             </div>
 
             

@@ -84,7 +84,20 @@ input[type="radio"] {
     display: none;
 }
 
+
+
 input[type="radio"]:checked + .option {
+    border-color: #007bff;
+    transform: scale(0.95);
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+
+
+input[type="checkbox"]:checked + .option {
     border-color: #007bff;
     transform: scale(0.95);
 }

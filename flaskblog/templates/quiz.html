@@ -72,15 +72,33 @@
         const option2Element = document.getElementById('optionB');
         const option3Element = document.getElementById('optionC');
         
+
+        // Function to generate non-repeating random numbers from 1 to 3
+        function generateNonRepeatingRandomNumbers() {
+            // Create an array of numbers from 1 to 3
+            const numbers = [1, 2, 3];
+        
+            // Shuffle the array using the Fisher-Yates algorithm
+            for (let i = numbers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+            }
+        
+            // Return the numbers in the shuffled order
+            return numbers;
+        }
+
+
         function showQuestion() {
             questionNumberElement.textContent = `Question ${currentQuestion + 1} of ${questionsData.length}`;
             currentQuestionElement.textContent = questionsData[currentQuestion].question;
             if (questionsData[currentQuestion]) {
                 const options =  questionsData[currentQuestion].options;
-            
-                option1Element.textContent = options[0];
-                option2Element.textContent = options[1];
-                option3Element.textContent = options[2];
+                const nonRepeatingNumbers = generateNonRepeatingRandomNumbers();
+
+                option1Element.textContent = options[nonRepeatingNumbers[0]-1];
+                option2Element.textContent = options[nonRepeatingNumbers[1]-1];
+                option3Element.textContent = options[nonRepeatingNumbers[2]-1];
                 
             }
 
@@ -141,6 +159,10 @@
 
         // Initial question display
         showQuestion();
+
+        function submit(){
+            
+        }
     </script>
 </body>
 </html>
