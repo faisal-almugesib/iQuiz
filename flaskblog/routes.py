@@ -324,3 +324,12 @@ def addDate():
                 return redirect(url_for('calendar'))
         
     return render_template('addDate.html',title='addDate', form=form, user=current_user)
+
+
+@app.route("/deleteExam", methods=['GET','POST'])
+@login_required
+def deleteExam():
+    checkboxes = request.form.getlist('checkbox')
+    for i in checkboxes:
+        print(i)
+    return redirect(url_for('home'))

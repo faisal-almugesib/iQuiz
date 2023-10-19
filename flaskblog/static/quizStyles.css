@@ -71,14 +71,13 @@ body {
     border-color: #000;
 }
 
-.option:focus {
+
+
+.blue-border {
     border-color: #007bff;
     outline: none;
 }
 
-.option:active {
-    border-color: #007bff;
-}
 
 input[type="radio"] {
     display: none;
@@ -92,6 +91,8 @@ input[type="radio"]:checked + .option {
 }
 
 input[type="checkbox"] {
+    width: 300px;
+    height: 100px;
     display: none;
 }
 

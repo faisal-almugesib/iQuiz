@@ -48,6 +48,149 @@
     .one-day{
         color: orange;
     }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    
+    /*
+    .card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        text-align: center;
+        width: 400px;
+        overflow: hidden; 
+    }
+    */
+    
+    .card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        text-align: center;
+        width: 400px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        /* Additional CSS styles for the centered content go here */
+    }
+    
+    .question {
+        font-weight: bold;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #3a0fe4; /* Question text color */
+        position: relative;
+    }
+    
+    .option {
+        display: block;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+        border: 2px solid transparent;
+        
+        /*
+        if it long remove the extended part and puts ...
+    
+        white-space: nowrap; /* Prevents line breaks in button text *
+        overflow: hidden; /* Hides overflowing text *
+        text-overflow: ellipsis; /* Adds ellipsis (...) to indicate text overflow *
+        max-width: 100%; /* Ensures the button doesn't exceed card width *
+        */
+    
+        
+        white-space: normal; /* Allow text to wrap to multiple lines */
+        word-wrap: break-word; /* Allow long words to break onto the next line */
+        max-width: 100%; /* Ensures the button doesn't exceed card width */
+    }
+    
+    .option:hover {
+        transform: scale(0.95);
+        border-color: #000;
+    }
+    
+    
+    
+    .blue-border {
+        border-color: #007bff;
+        outline: none;
+    }
+    
+    
+    input[type="radio"] {
+        display: none;
+    }
+    
+    
+    
+    input[type="radio"]:checked + .option {
+        border-color: #007bff;
+        transform: scale(0.95);
+    }
+    
+    input[type="checkbox"] {
+        width: 300px;
+        height: 100px;
+        
+    }
+    
+    
+    
+    input[type="checkbox"]:checked + .option {
+        border-color: #007bff;
+        transform: scale(0.95);
+    }
+    
+    
+    button[type="submit"] {
+        visibility:"";
+        background-color: #3b4ef8;;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: #0a22f6; 
+    }
+    
+    
+    .navigate {
+        visibility:"";
+        background-color: #3b4ef8;;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .navigate:hover {
+        background-color: #0a22f6; /* Lighter color on hover */
+    }
+    
+    
+    
+    
+    
 
     </style>
     </head>
@@ -57,6 +200,45 @@
     <!-- ======= Header ======= -->
     {% extends "layout.html" %}
     {% block content %}
+
+    <script>document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('clickable-option')) {
+            event.target.classList.toggle('blue-border');
+        }
+
+ });
+</script>
+ <div id="selectedOptions">Selected Options: </div>
+
+        
+    
+
+    <script>
+        // JavaScript to update the selected options in real-time
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const selectedOptions = document.getElementById('selectedOptions');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateSelectedOptions();
+            });
+        });
+
+        function updateSelectedOptions() {
+            const selected = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+
+            if (selected.length > 0) {
+                selectedOptions.textContent = 'Selected Options: ' + selected.join(', ');
+            } else {
+                selectedOptions.textContent = 'Selected Options: ';
+            }
+        }
+    
+
+
+</script>
     
     <!-- ======= Hero Section ======= -->
     <section id="hero" class="d-flex align-items-center">
@@ -76,6 +258,9 @@
                 left: 50%;" >Add an exam date</button>
             </a>
             
+                        <label for="deleteExam-1">
+
+
             <div class = "exam-list" style = "position: absolute;
             top: 40%;
             left: 50%;">
@@ -83,35 +268,18 @@
                 {% if not exams %}
                     You don't have any upcoming exams
                 {% endif %}
-                <form>
-                    <label for="option1" style="display: block;">
-                        <input type="checkbox" name="answer" id="option1" value="A">
-                        <button class="option" type="button"  id="optionA">Option A</button>
-                    </label>
-                    <label for="option2" style="display: block;">
-                        <input type="checkbox" name="answer" id="option2" value="B">
-                        <button class="option" type="button"  id="optionB">Option B</button>
-                    </label>
-                    <label for="option3" style="display: block;">
-                        <input type="checkbox" name="answer" id="option3" value="C">
-                        <button class="option" type="button"  id="optionC">Option C</button>
-                    </label>
-                    
-                    <button type="button" id="previousButton" class="navigate" onclick="goToPreviousQuestion()"><</button>
-                    <button type="submit" id="submit">Submit</button>
-                    <button type="button" id="nextButton" class="navigate" onclick="goToNextQuestion()">></button>
-                    
-                </form>
-                <form>
+                
+                <form action="/deleteExam">
                 
                     {% for exam in exams %}
                     {% set remaining_days = (exam.date - current_date).days  %}
                     {% if remaining_days >= 0 %}
-                    <button class="option" type="button"  id="examButton">
                     
                        
-                        <label for="deleteExam">
-                        <input type="checkbox" name="deleteExam" value="{{ exam.course }}" id="deleteExam-{{exam.id}}">
+                    <div class = "option clickable-option">
+                        <input type="checkbox" name="checkbox[]" value="{{ exam.date }},{{exam.course}}" id="{{ exam.date }},{{exam.date}}">
+                        <label for="{{ exam.date }},{{exam.date}}">
+                        
                         
                         
                         <div class="course">{{ exam.course }}</div>
@@ -135,17 +303,21 @@
                             
                         {% endif %}
                         </label>
-                    
-                </button>
+                        
+                    </div>
                     {% endif %}
                 {% endfor %}
                 
+                <button type="submit"></button>
+            
             </form>
             </div>
-
+            
+            
             
         
         </div>
+        
         <img src="static/assets/img/hero-img.png" class="img-fluid hero-img" alt="" data-aos="zoom-in" data-aos-delay="150">
         </div>
     
