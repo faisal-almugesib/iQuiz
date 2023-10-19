@@ -333,3 +333,4 @@ def deleteExam():
     for i in checkboxes:
         print(i)
     return redirect(url_for('home'))
+

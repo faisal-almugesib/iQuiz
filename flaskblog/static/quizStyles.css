@@ -71,34 +71,20 @@ body {
     border-color: #000;
 }
 
-
-
-.blue-border {
+.option:focus {
     border-color: #007bff;
     outline: none;
 }
 
+.option:active {
+    border-color: #007bff;
+}
 
 input[type="radio"] {
     display: none;
 }
 
-
-
 input[type="radio"]:checked + .option {
-    border-color: #007bff;
-    transform: scale(0.95);
-}
-
-input[type="checkbox"] {
-    width: 300px;
-    height: 100px;
-    display: none;
-}
-
-
-
-input[type="checkbox"]:checked + .option {
     border-color: #007bff;
     transform: scale(0.95);
 }
@@ -136,7 +122,3 @@ button[type="submit"]:hover {
 .navigate:hover {
     background-color: #0a22f6; /* Lighter color on hover */
 }
-
-
-
-
