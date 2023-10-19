@@ -84,15 +84,34 @@
                     You don't have any upcoming exams
                 {% endif %}
                 <form>
-                <ul class="exam-list">
+                    <label for="option1" style="display: block;">
+                        <input type="checkbox" name="answer" id="option1" value="A">
+                        <button class="option" type="button"  id="optionA">Option A</button>
+                    </label>
+                    <label for="option2" style="display: block;">
+                        <input type="checkbox" name="answer" id="option2" value="B">
+                        <button class="option" type="button"  id="optionB">Option B</button>
+                    </label>
+                    <label for="option3" style="display: block;">
+                        <input type="checkbox" name="answer" id="option3" value="C">
+                        <button class="option" type="button"  id="optionC">Option C</button>
+                    </label>
+                    
+                    <button type="button" id="previousButton" class="navigate" onclick="goToPreviousQuestion()"><</button>
+                    <button type="submit" id="submit">Submit</button>
+                    <button type="button" id="nextButton" class="navigate" onclick="goToNextQuestion()">></button>
+                    
+                </form>
+                <form>
+                
                     {% for exam in exams %}
                     {% set remaining_days = (exam.date - current_date).days  %}
                     {% if remaining_days >= 0 %}
-                    <button class="option" type="button"  id="option_{{ loop.index }}">
-                    <li >
+                    <button class="option" type="button"  id="examButton">
+                    
                        
-                        <label for="exam_{{ loop.index }}">
-                        <input type="check" name="delete_exams" value="{{ exam.course }}" id="exam_{{ loop.index }}">
+                        <label for="deleteExam">
+                        <input type="checkbox" name="deleteExam" value="{{ exam.course }}" id="deleteExam-{{exam.id}}">
                         
                         
                         <div class="course">{{ exam.course }}</div>
@@ -116,11 +135,11 @@
                             
                         {% endif %}
                         </label>
-                    </li>
+                    
                 </button>
                     {% endif %}
                 {% endfor %}
-                </ul>
+                
             </form>
             </div>
 
