@@ -276,7 +276,8 @@ def summary():
 def calendar():
     exams = []
     for exam in current_user.exams:
-        temp = {"course" : exam.course,
+        temp = {"id" : exam.id,
+                "course" : exam.course,
                 "date"   : exam.date
                 }
         exams.append(temp)
@@ -326,11 +327,20 @@ def addDate():
     return render_template('addDate.html',title='addDate', form=form, user=current_user)
 
 
-@app.route("/deleteExam", methods=['GET','POST'])
+@app.route("/deleteExam", methods=['POST'])
 @login_required
 def deleteExam():
-    checkboxes = request.form.getlist('checkbox')
-    for i in checkboxes:
-        print(i)
-    return redirect(url_for('home'))
+    exams = db.session.query(Exam).all() #TO DELETE ALL THE EXAMS IN THE PAST
+    for exam in exams:
+        if(exam.date<datetime.date.today()):
+            db.session.delete(exam)
+            db.session.commit()
 
+    checkboxes = request.form.getlist('checkbox[]')
+    for exam_id in checkboxes:
+        exam = Exam.query.filter_by(id=exam_id).first()
+        if exam:
+            flash(f'{exam.course} Exam has been deleted!',category='success')
+            db.session.delete(exam)
+            db.session.commit()
+    return redirect(url_for('calendar'))
