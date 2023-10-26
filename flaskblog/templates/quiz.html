@@ -73,20 +73,7 @@
         const option3Element = document.getElementById('optionC');
         
 
-        // Function to generate non-repeating random numbers from 1 to 3
-        function generateNonRepeatingRandomNumbers() {
-            // Create an array of numbers from 1 to 3
-            const numbers = [1, 2, 3];
-        
-            // Shuffle the array using the Fisher-Yates algorithm
-            for (let i = numbers.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
-            }
-        
-            // Return the numbers in the shuffled order
-            return numbers;
-        }
+       
 
 
         function showQuestion() {
@@ -94,11 +81,9 @@
             currentQuestionElement.textContent = questionsData[currentQuestion].question;
             if (questionsData[currentQuestion]) {
                 const options =  questionsData[currentQuestion].options;
-                const nonRepeatingNumbers = generateNonRepeatingRandomNumbers();
-
-                option1Element.textContent = options[nonRepeatingNumbers[0]-1];
-                option2Element.textContent = options[nonRepeatingNumbers[1]-1];
-                option3Element.textContent = options[nonRepeatingNumbers[2]-1];
+                option1Element.textContent = options[0];
+                option2Element.textContent = options[1];
+                option3Element.textContent = options[2];
                 
             }
 
@@ -146,11 +131,10 @@
         }
 
         function saveAnswer(choice) {
-            // Get the text of the selected option
-            const selectedOptionText = document.querySelector(`label[for="option${choice}"] .option`).textContent;
+            
+            userAnswers[currentQuestion] = choice;
         
-            // Store the text of the selected option in userAnswers
-            userAnswers[currentQuestion] = selectedOptionText;
+            
             
             // Uncheck all other radio buttons in the same group
             const radioButtons = document.getElementsByName('answer');
@@ -164,45 +148,7 @@
         // Initial question display
         showQuestion();
 
-        function submit(){
-            let grade = 0;
-            let wrongQuestions = [];
-            for (let i = 0; i < userAnswers.length; i++) {
-                if(userAnswers[i] == questionsData[i].options[0])
-                    grade++;
-                else
-                    wrongQuestions.append(i);
-            }
-
-        }
-        function showQuestions() {
-            questionNumberElement.textContent = `Question ${currentQuestion + 1} of ${questionsData.length}`;
-            currentQuestionElement.textContent = questionsData[currentQuestion].question;
-            if (questionsData[currentQuestion]) {
-                const options =  questionsData[currentQuestion].options;
-                const nonRepeatingNumbers = generateNonRepeatingRandomNumbers();
-
-                option1Element.textContent = options[nonRepeatingNumbers[0]-1];
-                option2Element.textContent = options[nonRepeatingNumbers[1]-1];
-                option3Element.textContent = options[nonRepeatingNumbers[2]-1];
-                
-            }
-
-            // Check if a choice has been made for the current question
-            if (userAnswers[currentQuestion]) {
-                const selectedOption = document.getElementById(`option${userAnswers[currentQuestion]}`);
-                if (selectedOption) {
-                    selectedOption.checked = true;
-                }
-            } else {
-                // If no choice has been made, clear the selection
-                const radioButtons = document.getElementsByName('answer');
-                for (let i = 0; i < radioButtons.length; i++) {
-                    radioButtons[i].checked = false;
-                }
-            } 
-        }
-
+        
         
     </script>
 </body>
