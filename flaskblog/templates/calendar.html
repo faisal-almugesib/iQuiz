@@ -2,52 +2,74 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='quizStyles.css') }}">
     
     <style>
-    /* Style for button container */
-    .button-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        .blue-border {
+            border-color: #007bff;
+            outline: none;
+        }
+    
+    
+        input[type="checkbox"] {
+            width: 300px;
+            height: 100px;
+            display: none;
+        }
         
-    }
-    
-    /* Style for the buttons */
-    .btn-get-started {
-        margin: 0 5px;
-    }
-    .exam-list {
-        list-style-type: none;
-        padding: 0;
-    }
-    
-    .exam {
-        border: 2px solid transparent;
-        border-radius: 4px;
-        margin: 10px;
-        padding: 10px;
-        cursor: pointer;
-        transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-    
-    .exam:hover {
-        transform: scale(0.95);
-        border-color: #000;
-    }
-    
-    .course {
-        font-weight: bold;
-    }
-    
-    .date {
-        color: #555;
-    }
-    
-    .today{
-        color: red;
-    }
+        
+        
+        input[type="checkbox"]:checked + .exam {
+            border-color: #007bff;
+            transform: scale(0.95);
+        }
+        .exam:focus {
+            border-color: #007bff;
+            
+        }
 
-    .one-day{
-        color: orange;
-    }
+        .exam {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            border: 2px solid transparent;
+            
+            /*
+            if it long remove the extended part and puts ...
+        
+            white-space: nowrap; /* Prevents line breaks in button text *
+            overflow: hidden; /* Hides overflowing text *
+            text-overflow: ellipsis; /* Adds ellipsis (...) to indicate text overflow *
+            max-width: 100%; /* Ensures the button doesn't exceed card width *
+            */
+        
+            
+            white-space: normal; /* Allow text to wrap to multiple lines */
+            word-wrap: break-word; /* Allow long words to break onto the next line */
+            max-width: 100%; /* Ensures the button doesn't exceed card width */
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .exam:hover {
+            transform: scale(0.95);
+            
+        }
+        
+        .exam:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        
+        .exam:active {
+            border-color: #007bff;
+        }
+        
+        .black-border {
+            border-color: #000;
+            
+        }
+        
 
     </style>
     </head>
@@ -57,6 +79,21 @@
     <!-- ======= Header ======= -->
     {% extends "layout.html" %}
     {% block content %}
+
+    <script>document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('clickable-option')) {
+            event.target.classList.toggle('blue-border');
+            event.target.classList.toggle('black-border');
+        }
+
+ });
+</script>
+ 
+
+        
+    
+
+
     
     <!-- ======= Hero Section ======= -->
     <section id="hero" class="d-flex align-items-center">
@@ -76,6 +113,9 @@
                 left: 50%;" >Add an exam date</button>
             </a>
             
+                        <label for="deleteExam-1">
+
+
             <div class = "exam-list" style = "position: absolute;
             top: 40%;
             left: 50%;">
@@ -83,39 +123,70 @@
                 {% if not exams %}
                     You don't have any upcoming exams
                 {% endif %}
-                <ul class="exam-list">
+                
+                <form action="/deleteExam" method="POST">
+                
                     {% for exam in exams %}
                     {% set remaining_days = (exam.date - current_date).days  %}
                     {% if remaining_days >= 0 %}
-                    <li class="exam">
+                    
+                    <label for="{{exam.id}}" onclick="">
+                    <div class="exam clickable-option" onclick="toggleBlueBorder(this)">
+                        <input type="checkbox" name="checkbox[]" value="{{exam.id}}" id="{{exam.id}}">
+                        
+                        
+                        
+                        
                         <div class="course">{{ exam.course }}</div>
                         <div class="date">{{ exam.date }}</div>
+                    
                         {% if remaining_days <= 2 %}
                             
                                 {% if remaining_days == 0 %}
-                                <div class="today">
+                                <div style="color:red;">
                                     Today is your exam good luck!
                                 </div>
                                 {% elif remaining_days == 1 %}
-                                <div class="one-day">
+                                <div style="color:orange;">
                                     Tomorrow is your exam, practice some quizzes in our home page!
                                 </div>
                                 {% elif remaining_days == 2 %}
-                                <div class="two-days">
+                                <div >
                                     2 days left for your exam
                                 </div>
                                 {% endif %}
                             
                         {% endif %}
-                    </li>
+                        </label>
+                        
+                    </div>
                     {% endif %}
                 {% endfor %}
-                </ul>
+                
+                <button type="submit" id="deleteExamsButton">Delete exams</button>
+            
+            </form>
             </div>
-
+            
+            <script>
+                // Add a click event listener to the delete exams button
+                const deleteExamsButton = document.getElementById('deleteExamsButton');
+            
+                deleteExamsButton.addEventListener('click', function (event) {
+                    // Show a confirmation dialog
+                    const confirmDelete = confirm('Are you sure you want to delete the selected exams? it will no longer appear in your account');
+                    
+                    if (!confirmDelete) {
+                        // If the user cancels the action, prevent the form submission
+                        event.preventDefault();
+                    }
+                });
+            </script>
+            
             
         
         </div>
+        
         <img src="static/assets/img/hero-img.png" class="img-fluid hero-img" alt="" data-aos="zoom-in" data-aos-delay="150">
         </div>
     

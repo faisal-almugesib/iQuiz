@@ -72,12 +72,15 @@
         const option2Element = document.getElementById('optionB');
         const option3Element = document.getElementById('optionC');
         
+
+       
+
+
         function showQuestion() {
             questionNumberElement.textContent = `Question ${currentQuestion + 1} of ${questionsData.length}`;
             currentQuestionElement.textContent = questionsData[currentQuestion].question;
             if (questionsData[currentQuestion]) {
                 const options =  questionsData[currentQuestion].options;
-            
                 option1Element.textContent = options[0];
                 option2Element.textContent = options[1];
                 option3Element.textContent = options[2];
@@ -128,8 +131,11 @@
         }
 
         function saveAnswer(choice) {
+            
             userAnswers[currentQuestion] = choice;
-
+        
+            
+            
             // Uncheck all other radio buttons in the same group
             const radioButtons = document.getElementsByName('answer');
             for (let i = 0; i < radioButtons.length; i++) {
@@ -141,6 +147,9 @@
 
         // Initial question display
         showQuestion();
+
+        
+        
     </script>
 </body>
 </html>
