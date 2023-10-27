@@ -13,7 +13,7 @@
     <div class="card">
         <h1 class="question" id="questionNumber"></h1>
         <h1 id="currentQuestion"></h1>
-        <form>
+        <form action = "/submit" method = "POST" id="quizForm">
             <label for="option1" style="display: block;">
                 <input type="radio" name="answer" id="option1" value="A">
                 <button class="option" type="button" onclick="saveAnswer('1')" id="optionA">Option A</button>
@@ -30,7 +30,10 @@
             <button type="button" id="previousButton" class="navigate" onclick="goToPreviousQuestion()"><</button>
             <button type="submit" id="submit">Submit</button>
             <button type="button" id="nextButton" class="navigate" onclick="goToNextQuestion()">></button>
-            
+                <!-- Add hidden input fields for the data you want to submit -->
+            <input type="hidden" name="questionsData" id="questionsDataInput">
+            <input type="hidden" name="optionsOrder" id="optionsOrderInput">
+            <input type="hidden" name="userAnswers" id="userAnswersInput">
         </form>
     </div>
 
@@ -50,6 +53,25 @@
 
         // JavaScript code to work with questionsData
         console.log(questionsData); // For demonstration purposes
+        
+        // Find the form element
+        const quizForm = document.getElementById('quizForm');
+
+        // Add an event listener to the form's submit event
+        quizForm.addEventListener('submit', function (event) {
+            // Prevent the submit event form from submitting immediately
+            event.preventDefault();
+
+            // Set the values of the hidden input fields
+            document.getElementById('questionsDataInput').value = JSON.stringify(questionsData);
+            document.getElementById('optionsOrderInput').value = JSON.stringify(optionsOrder);
+            document.getElementById('userAnswersInput').value = JSON.stringify(userAnswers);
+
+            // After setting the values, you can now submit the form
+            quizForm.submit();
+        });
+
+        
     </script>
     <script>
         const questions = [
@@ -81,9 +103,12 @@
             currentQuestionElement.textContent = questionsData[currentQuestion].question;
             if (questionsData[currentQuestion]) {
                 const options =  questionsData[currentQuestion].options;
-                option1Element.textContent = options[0];
-                option2Element.textContent = options[1];
-                option3Element.textContent = options[2];
+                const optionsOrder = {{ optionsOrder | tojson | safe }};
+                const currentQuestionOptionsOrder = optionsOrder[currentQuestion]; 
+            
+                option1Element.textContent = options[currentQuestionOptionsOrder[0]];
+                option2Element.textContent = options[currentQuestionOptionsOrder[1]];
+                option3Element.textContent = options[currentQuestionOptionsOrder[2]];
                 
             }
 

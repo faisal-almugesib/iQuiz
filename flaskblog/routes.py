@@ -8,6 +8,9 @@ import json
 import openai
 from flask import jsonify
 import datetime
+import random
+
+
 
 
 '''
@@ -183,7 +186,7 @@ def account():
 @login_required
 def quiz():
 
-    openai.api_key = "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"
+    openai.api_key = "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"
 
     text = request.args.get('article')
     text = text.strip()
@@ -235,7 +238,26 @@ def quiz():
             print(a)
         print("\n")
     '''
-    return render_template('quiz.html', user=current_user, questions=questions)
+    optionsOrder = []
+    for i in range(10):
+        optionNumberOrder =  random.sample(range(0, 3), 3)
+        optionsOrder.append(optionNumberOrder)
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder)
+
+
+@app.route('/submit', methods=['POST'])
+@login_required
+def submit():
+    questions_data = request.form.get('questionsData')
+    options_order = request.form.get('optionsOrder')
+    user_answers = request.form.get('userAnswers')
+
+    # Parse the JSON data if needed
+    questions_data = json.loads(questions_data)
+    options_order = json.loads(options_order)
+    user_answers = json.loads(user_answers)
+    return render_template('submit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers)
+
 
 
 @app.route("/summary", methods=['GET','POST'])
@@ -344,3 +366,5 @@ def deleteExam():
             db.session.delete(exam)
             db.session.commit()
     return redirect(url_for('calendar'))
+
+
