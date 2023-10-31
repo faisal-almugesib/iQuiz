@@ -13,7 +13,7 @@
     <div class="card">
         <h1 class="question" id="questionNumber"></h1>
         <h1 id="currentQuestion"></h1>
-        <form action = "/submit" method = "POST" id="quizForm">
+        <form action = "/submit" method = "GET" id="quizForm">
             <label for="option1" style="display: block;">
                 <input type="radio" name="answer" id="option1" value="A">
                 <button class="option" type="button" onclick="saveAnswer('1')" id="optionA">Option A</button>
@@ -60,7 +60,7 @@
         // Add an event listener to the form's submit event
         quizForm.addEventListener('submit', function (event) {
             // Prevent the submit event form from submitting immediately
-            event.preventDefault();
+            
 
             // Set the values of the hidden input fields
             document.getElementById('questionsDataInput').value = JSON.stringify(questionsData);

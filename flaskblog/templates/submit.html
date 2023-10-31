@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='quizStyles.css') }}">
 </head>
 <body>
-    
+    {% for answer in answers %}
+        <p>{{answer}}h</p>
 
-
+    {%endfor%}
 
 
 
