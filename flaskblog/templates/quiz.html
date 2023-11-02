@@ -51,6 +51,8 @@
             {% endfor %}
         ];
 
+        var optionsOrder = {{ optionsOrder | tojson | safe }}; 
+
         // JavaScript code to work with questionsData
         console.log(questionsData); // For demonstration purposes
         

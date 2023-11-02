@@ -7,24 +7,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Card Quiz</title>
     
-    <link rel="stylesheet" href="{{ url_for('static',filename='quizStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='quizStyles.css') }}">
+    <style>
+        .resultCard {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            margin: 20px; /* Added margin to separate cards */
+        }
+        .correctOption {
+            color: green;
+        }
+        .wrongOption {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    {% for answer in answers %}
-        <p>{{answer}}h</p>
+    <div id="questionCards" style="position: absolute;
+    top: 10%;
+    left: 20%;"></div>
 
-    {%endfor%}
+    <script>
+        // Get the query string from the URL
+        const queryString = window.location.search;
 
+        var questionsData;
+        var userAnswers;
+        var optionsOrder;
 
+        // Parse the query string
+        const urlParams = new URLSearchParams(queryString);
 
+        // Get the "questionsData," "userAnswers," and "optionsOrder" parameters from the query string
+        const questionsDataParam = urlParams.get("questionsData");
+        const userAnswersParam = urlParams.get("userAnswers");
+        const optionsOrderParam = urlParams.get("optionsOrder");
 
+        // Check if the parameters are not null and not empty strings
+        if (
+            questionsDataParam !== null &&
+            questionsDataParam !== "" &&
+            userAnswersParam !== null &&
+            userAnswersParam !== "" &&
+            optionsOrderParam !== null &&
+            optionsOrderParam !== ""
+        ) {
+            // Parse the parameters as JSON to get arrays
+            questionsData = JSON.parse(questionsDataParam);
+            userAnswers = JSON.parse(userAnswersParam);
+            optionsOrder = JSON.parse(optionsOrderParam);
 
-    
+            // Now, questionsData, userAnswers, and optionsOrder are arrays
+            console.log("Questions Data:", questionsData);
+            console.log("User Answers:", userAnswers);
+            console.log("Options Order:", optionsOrder);
+        } else {
+            console.log("One or more of the parameters are missing or invalid.");
+        }
+
+        var grade=0;
+
+        // Create question cards for each element in the "questionsData" array
+        const questionCards = document.getElementById("questionCards");
+
+        questionsData.forEach((question, index) => {
+            const card = document.createElement("div");
+            card.classList.add("resultCard");
+
+            const questionTitle = document.createElement("h1");
+            questionTitle.textContent = question.question;
+            card.appendChild(questionTitle);
+            var currentOptionsOrder = optionsOrder[index];
+            var options = [];
+            options.push(question.options[currentOptionsOrder[0]]);
+            options.push(question.options[currentOptionsOrder[1]]);
+            options.push(question.options[currentOptionsOrder[2]]);
+            var flagForCorrectAnswer=false;
+            if(options[userAnswers[index]-1] == question.options[0]){
+                flagForCorrectAnswer=true;
+                grade++;
+            }
+                
+            // Loop through the options and create input elements and buttons
+            options.forEach((option, optionIndex) => {
+                
+                const label = document.createElement("label");
+                const input = document.createElement("input");
+                input.type = "radio";
+                input.name = `answer${index}`;
+                input.value = String.fromCharCode(65 + optionIndex); // A, B, C, ...
+                input.disabled = true;
+                const button = document.createElement("button");
+                button.classList.add("option");
+                button.type = "button";
+                button.textContent = option;
+
+                if (flagForCorrectAnswer && option == question.options[0]) {
+                    button.classList.add("correctOption");
+                }
+                else {
+                    if(option == question.options[0])
+                        button.classList.add("correctOption");
+                    if(option == options[userAnswers[index]-1])
+                    button.classList.add("wrongOption");
+                        
+
+                }
+
+                label.appendChild(input);
+                label.appendChild(button);
+
+                card.appendChild(label);
+            });
+
+            questionCards.appendChild(card);
+        });
+
+        // Now, you have created a card for each question in the "questionsData" array
+    </script>
 </body>
-
-
-
-
-
-
-{%endblock content%}
+{% endblock content %}
