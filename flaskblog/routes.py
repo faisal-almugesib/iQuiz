@@ -8,6 +8,9 @@ import json
 import openai
 from flask import jsonify
 import datetime
+import random
+
+
 
 
 '''
@@ -183,13 +186,15 @@ def account():
 @login_required
 def quiz():
 
-    openai.api_key = "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"
+    openai.api_key = "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"
 
     text = request.args.get('article')
     text = text.strip()
 
     prompt = f"\n\n{text}\nGenerate 10 multiple choice questions that covers the whole provided article and exactly 3 answers choices based on the following article:: number of the question. the question that covers the article.\n a) choice A \n b) choice B \n c) choice C. "
 
+    '''
+    WE WILL USE READY RESPONSE FOR TESTING
     response = openai.Completion.create(
                 engine="text-davinci-002",
                 prompt=prompt,
@@ -198,33 +203,53 @@ def quiz():
                 stop=None,
                 temperature=0.7  # You can adjust this for creativity
             )
+    '''
+    response = {
+  "warning": "This model version is deprecated. Migrate before January 4, 2024 to avoid disruption of service. Learn more https://platform.openai.com/docs/deprecations",
+  "id": "cmpl-8E7LGA8XOQINqDzGqN9fH7HEuByPY",
+  "object": "text_completion",
+  "created": 1698375506,
+  "model": "text-davinci-002",
+  "choices": [
+    
+    {
+      "text": "\n1. What is the main focus of AI?\na. To create intelligent machines that can perform human-like tasks\nb. To revolutionize industries\nc. To improve our daily lives\n\n2. What are some of the ethical considerations of AI?\na. Concerns about job displacement\nb. The impact on employment\nc. Data privacy\n\n3. What are some of the potential applications of AI?\na. Addressing global problems\nb. Improving healthcare\nc. reducing climate change\n\n4. What is the future of AI?\na. More sophisticated AI systems\nb. AI systems becoming more capable\nc. Exciting developments\n\n5. What is one of the challenges of AI?\na. Its potential to revolutionize industries\nb. Ethical considerations\nc. The lack of understanding about AI\n\n6. What are some of the opportunities that AI presents?\na. New job opportunities\nb. The potential to address complex global problems\nc. The opportunity to improve our daily lives\n\n7. What is one of the benefits of AI?\na. Its potential to improve our daily lives\nb. Its ability to revolutionize industries\nc. Its potential to create new job opportunities\n\n8. What is one of the concerns of AI?\na. The impact on employment\nb. Job displacement\nc. The lack of understanding about AI\n\n9. What is the goal of AI?\na. To improve our daily lives\nb. To create intelligent machines\nc. To solve complex global problems\n\n10. What is the future of AI?\na. More sophisticated AI systems\nb. AI systems becoming more capable\nc. Exciting developments",     
+      "index": 0,
+      "logprobs": None,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 211,
+    "completion_tokens": 4173,
+    "total_tokens": 4384
+  }
+}
+
     questions = []
 
-    for i, item in enumerate(response.choices):
-        text = item.text.strip().split('\n')
+    for i, item in enumerate(response["choices"]):
+        text = item["text"].strip().split('\n')
         cleaned_text = [line.strip() for line in text if line.strip()]
 
-    t= False
-    if cleaned_text[4] == "2.":#set boolen if there is /n after the question number to jump it always
-        t= True    
- 
-    j=0
-    while j < len(cleaned_text) - 3:
-        question_text = cleaned_text[j]
+        t = False
+        if cleaned_text[4] == "2.":  # set a boolean if there is /n after the question number to jump it always
+            t = True
 
-        answer_options = cleaned_text[j+1:j+4]
+        j = 0
+        while j < len(cleaned_text) - 3:
+            question_text = cleaned_text[j]
 
-        questions.append({
-            "question": question_text,
-            "options": answer_options
-        })
+            answer_options = cleaned_text[j + 1:j + 4]
 
-        j += 4
-        #correct_answer = answer_options[0].strip()  # The first option is the correct answer
-        #options = [option.strip() for j, option in enumerate(answer_options)]
-        #j+=4
-        if t:
-            j+=1
+            questions.append({
+                "question": question_text,
+                "options": answer_options
+            })
+
+            j += 4
+            if t:
+                j += 1
     '''
     #this code to print the questions  in the terminal
     print("\n----------------------------------------------------------------------------------------------------------\n")
@@ -235,13 +260,30 @@ def quiz():
             print(a)
         print("\n")
     '''
-    return render_template('quiz.html', user=current_user, questions=questions)
+    optionsOrder = []
+    for i in range(10):
+        optionNumberOrder =  random.sample(range(0, 3), 3)
+        optionsOrder.append(optionNumberOrder)
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder)
+
+
+@app.route('/submit', methods=['GET'])
+@login_required
+def submit():
+    questions_data = request.form.get('questionsData')
+    options_order = request.form.get('optionsOrder')
+    user_answers = request.form.get('userAnswers')
+
+    # Parse the JSON data if needed
+    
+    return render_template('submit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers)
+
 
 
 @app.route("/summary", methods=['GET','POST'])
 @login_required
 def summary():
-    openai.api_key = "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"
+    openai.api_key = "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"
 
     text = request.args.get('article')
     text = text.strip()
@@ -344,3 +386,5 @@ def deleteExam():
             db.session.delete(exam)
             db.session.commit()
     return redirect(url_for('calendar'))
+
+

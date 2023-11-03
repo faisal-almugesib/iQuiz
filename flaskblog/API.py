@@ -2,22 +2,22 @@ import json
 import openai
 from flask import jsonify
 
-openai.api_key = "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"
+openai.api_key = ""
 
 text_input = input('Enter text:')
 text = str(text_input)
 text = text.strip()
 
-prompt = f"Generate 10 multiple choice questions and exactly 3 answers choices based on the following article:\n\n{text}\n\n1. "
+prompt = f"\n\n{text}\nGenerate 10 multiple choice questions that covers the whole provided article and exactly 3 answers choices based on the following article:: number of the question. the question that covers the article.\n a) choice A \n b) choice B \n c) choice C. "
 
 response = openai.Completion.create(
-            engine="text-davinci-002",
-            prompt=prompt,
-            max_tokens=600,  # You can adjust this based on your needs
-            n = 10,  # Number of questions to generate
-            stop=None,
-            temperature=0.7  # You can adjust this for creativity
-        )
+                engine="text-davinci-002",
+                prompt=prompt,
+                max_tokens=3000,  # You can adjust this based on your needs
+                n = 10,  # Number of questions to generate
+                stop=None,
+                temperature=0.7  # You can adjust this for creativity
+            )
 
 # This is the response
 print("The questions are:")
