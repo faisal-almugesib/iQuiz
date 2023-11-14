@@ -47,6 +47,23 @@
             max-width: 100%; /* Ensures the button doesn't exceed card width */
             
         }
+
+        
+        button[type="submit"] {
+            visibility:"";
+            background-color: #3b4ef8;;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0a22f6; 
+        }
     </style>
 </head>
 <body>
@@ -54,9 +71,22 @@
     top: 13%;
     left: 43%;"></h1>
 
+    <form action = "/save" method = "POST" id="saveForm"  style="position: absolute;
+    top: 18%;
+    left: 46%;">
+    
+        <button type="submit" id="submit">Save Quiz</button>
+        
+        <input type="hidden" name="questionsData" id="questionsDataInput">
+        <input type="hidden" name="optionsOrder" id="optionsOrderInput">
+        <input type="hidden" name="userAnswers" id="userAnswersInput">
+        <input type="hidden" name="grade" id="gradeInput">
+    </form>
+
     <div id="questionCards" style="position: absolute;
-    top: 15%;
-    left: 20%;"></div>
+    top: 23%;
+    left: 14%;"></div>
+
 
     <script>
         // Get the query string from the URL
@@ -159,6 +189,25 @@
 
         var gradeElement = document.getElementById("grade");
         gradeElement.textContent = `Your grade is ${grade}/10`
+
+
+         // Find the form element
+         const saveForm = document.getElementById('saveForm');
+
+         // Add an event listener to the form's submit event
+         saveForm.addEventListener('submit', function (event) {
+             // Prevent the submit event form from submitting immediately
+             
+ 
+             // Set the values of the hidden input fields
+             document.getElementById('questionsDataInput').value = JSON.stringify(questionsData);
+             document.getElementById('optionsOrderInput').value = JSON.stringify(optionsOrder);
+             document.getElementById('userAnswersInput').value = JSON.stringify(userAnswers);
+             document.getElementById('gradeInput').value = JSON.stringify(grade);
+ 
+             // After setting the values, you can now submit the form
+             saveForm.submit();
+         });
 
     </script>
 </body>

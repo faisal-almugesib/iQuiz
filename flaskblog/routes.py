@@ -1,7 +1,7 @@
 from flask import render_template,url_for, flash, redirect, request
 from flaskblog import app
 from flaskblog.forms import RegistrationForm, LoginForm, DeleteForm, EditEmailForm, EditNameForm, ChangePassword, AddDateForm
-from flaskblog.modelss import User, Article, Exam, user_exam
+from flaskblog.modelss import User, Article, Exam, user_exam, Quiz, Question, Choice
 from flaskblog import db
 from flask_login import login_user, login_required, logout_user, current_user
 import json
@@ -260,6 +260,7 @@ def quiz():
             print(a)
         print("\n")
     '''
+    
     optionsOrder = []
     for i in range(10):
         optionNumberOrder =  random.sample(range(0, 3), 3)
@@ -277,6 +278,40 @@ def submit():
     # Parse the JSON data if needed
     
     return render_template('submit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers)
+
+@app.route('/save', methods=['POST'])
+@login_required
+def save():
+    questions_data = request.form.get('questionsData')
+    options_order = request.form.get('optionsOrder')
+    user_answers = request.form.get('userAnswers')
+    grade = request.form.get('grade')
+
+    # Parse the JSON data if needed
+
+    questions_data = json.loads(questions_data)
+
+    user_id = current_user.id 
+    
+    new_quiz = Quiz(name='still not define yet!', score=grade, user_id=user_id)    
+    
+    db.session.add(new_quiz)
+    db.session.commit()
+    
+    quiz_id = new_quiz.id
+    #quiz = Quiz.query.order_by(Quiz.id.desc()).first()
+    for index, question in enumerate(questions_data):
+        new_question = Question(text=question['question'], quiz_id=quiz_id)
+        db.session.add(new_question)
+        db.session.commit()
+        question_id= new_question.id
+        for choice in question['options']:
+            new_choice = Choice(text=choice, question_id=question_id)
+            db.session.add(new_choice)
+            db.session.commit()
+        
+
+    return redirect(url_for('history'))
 
 
 
@@ -388,3 +423,69 @@ def deleteExam():
     return redirect(url_for('calendar'))
 
 
+@app.route("/history", methods=['GET','POST'])
+@login_required
+def history():
+    
+    quizzes = Quiz.query.filter_by(user_id = current_user.id).all()
+
+    quizzeslist = []
+    for quiz in quizzes:
+        quizzeslist.append({
+                "id": quiz.id,
+                "name": quiz.name,
+                "grade": quiz.score
+            })
+
+    return render_template('history.html',quizzes = quizzeslist)
+
+
+@app.route("/reattempt", methods=['POST'])
+@login_required
+def reattempt():
+    if request.method == 'POST':
+        quiz_id = request.form.get('quizId')
+        #quiz = Quiz.query.filter_by(id = quiz_id).first()
+        questionss = Question.query.filter_by(quiz_id = quiz_id).all()
+        options = Choice.query.filter_by(question_id = 21).all()
+    
+        
+        questions=[]
+
+        for question in questionss:
+            options = Choice.query.filter_by(question_id = question.id).all()
+            Choices=[]
+            for option in options:
+                Choices.append(option.text)
+            
+            questions.append({
+                "question": question.text,
+                "options": Choices
+            })    
+
+    
+    optionsOrder = []
+    for i in range(10):
+        optionNumberOrder =  random.sample(range(0, 3), 3)
+        optionsOrder.append(optionNumberOrder)
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder)
+    #return redirect(url_for('history'))
+
+@app.route("/deleteQuiz", methods=['POST'])
+@login_required
+def deleteQuiz():
+    if request.method == 'POST':
+        quiz_id = request.form.get('quizId')
+
+    quiz = Quiz.query.get_or_404(quiz_id)
+
+    # Check if the logged-in user is the owner of the quiz
+    if current_user.id == quiz.user_id:
+        # Assuming cascade is set up correctly, deleting the quiz will delete associated questions and choices
+        db.session.delete(quiz)
+        db.session.commit()
+        flash('Quiz deleted successfully!', 'success')
+    else:
+        flash('You are not authorized to delete this quiz.', 'danger')
+
+    return redirect(url_for('history'))
