@@ -35,10 +35,12 @@
             <input type="hidden" name="optionsOrder" id="optionsOrderInput">
             <input type="hidden" name="userAnswers" id="userAnswersInput">
             <input type="hidden" name="fromreattempt" id="fromreattemptInput" value="{{ fromreattempt }}">
+            <input type="hidden" name="quizId" id="quizIdInput" value = "{{ quizId }}">
         </form>
     </div>
 
     <script>
+        
         var questionsData = [
             {% for question in questions %}
                 {
@@ -69,12 +71,28 @@
             document.getElementById('questionsDataInput').value = JSON.stringify(questionsData);
             document.getElementById('optionsOrderInput').value = JSON.stringify(optionsOrder);
             document.getElementById('userAnswersInput').value = JSON.stringify(userAnswers);
+
             
+        
+
 
             // After setting the values, you can now submit the form
             quizForm.submit();
         });
 
+
+            {% if quizId is defined %}
+                var quizId = {{ quizId | tojson | safe }};
+            {% else %}
+                var quizId = "";  // or var quizId = ""; if you prefer an empty string
+            {% endif %}
+
+            if (quizId) {
+                console.log(quizId)
+            } else {
+                console.log("Quiz id is not necessary here");
+            }
+        
         
     </script>
     <script>

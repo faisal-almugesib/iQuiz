@@ -89,13 +89,14 @@
 
 
     <script>
+        
         // Get the query string from the URL
         const queryString = window.location.search;
 
         var questionsData;
         var userAnswers;
         var optionsOrder;
-
+       
         // Parse the query string
         const urlParams = new URLSearchParams(queryString);
 
@@ -103,6 +104,7 @@
         const questionsDataParam = urlParams.get("questionsData");
         const userAnswersParam = urlParams.get("userAnswers");
         const optionsOrderParam = urlParams.get("optionsOrder");
+        
 
         // Check if the parameters are not null and not empty strings
         if (
@@ -117,11 +119,13 @@
             questionsData = JSON.parse(questionsDataParam);
             userAnswers = JSON.parse(userAnswersParam);
             optionsOrder = JSON.parse(optionsOrderParam);
+            quizId = JSON.parse(optionsOrderParam);
 
             // Now, questionsData, userAnswers, and optionsOrder are arrays
             console.log("Questions Data:", questionsData);
             console.log("User Answers:", userAnswers);
             console.log("Options Order:", optionsOrder);
+            
         } else {
             console.log("One or more of the parameters are missing or invalid.");
         }

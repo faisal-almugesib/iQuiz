@@ -266,23 +266,49 @@ def quiz():
         optionNumberOrder =  random.sample(range(0, 3), 3)
         optionsOrder.append(optionNumberOrder)
     
-    fromreattempt= "1" 
+    fromreattempt= "False" 
     return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder, fromreattempt=fromreattempt)
 
 
 @app.route('/submit', methods=['GET'])
 @login_required
 def submit():
-    questions_data = request.form.get('questionsData')
-    options_order = request.form.get('optionsOrder')
-    user_answers = request.form.get('userAnswers')
+    grade = 0
+    questions_data_json = request.args.get('questionsData')
+    options_order_json = request.args.get('optionsOrder')
+    user_answers_json = request.args.get('userAnswers')
     from_reattempt = request.args.get('fromreattempt')
+    quizId = request.args.get('quizId')
+    
+    
+    # Initialize variables
+    questions_data = None
+    options_order = None
+    user_answers = None
+
+    # Parse JSON if the data is not None
+    if questions_data_json:
+        questions_data = json.loads(questions_data_json)
+    if options_order_json:
+        options_order = json.loads(options_order_json)
+    if user_answers_json:
+        user_answers = json.loads(user_answers_json)
+
 
     if(from_reattempt == "False"):
     # Parse the JSON data if needed
         return render_template('submit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers)
     
     else:
+        for i in range(10):
+            user_answer = user_answers[i]
+            if user_answer is not None and user_answer != '':
+        # Convert user_answer to int and check if the answer is correct
+                if options_order[i][int(user_answer)-1] == 0:
+                    grade += 1
+        curQuiz = Quiz.query.filter_by(id=quizId).first()
+        curQuiz.score = grade
+        db.session.commit()
         return render_template('resubmit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers,from_reattempt=from_reattempt)
         
 
@@ -488,7 +514,7 @@ def reattempt():
     for i in range(10):
         optionNumberOrder =  random.sample(range(0, 3), 3)
         optionsOrder.append(optionNumberOrder)
-    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder)
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder, quizId=quiz_id)
     #return redirect(url_for('history'))
 
 @app.route("/deleteQuiz", methods=['POST'])
