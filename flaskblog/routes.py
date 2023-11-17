@@ -9,7 +9,7 @@ import openai
 from flask import jsonify
 import datetime
 import random
-
+import requests
 
 
 
@@ -186,7 +186,7 @@ def account():
 @login_required
 def quiz():
 
-    openai.api_key = "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"
+    openai.api_key = "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"
 
     text = request.args.get('article')
     text = text.strip()
@@ -196,9 +196,9 @@ def quiz():
     '''
     WE WILL USE READY RESPONSE FOR TESTING
     response = openai.Completion.create(
-                engine="text-davinci-002",
+                engine="gpt-3.5-turbo-instruct",
                 prompt=prompt,
-                max_tokens=3000,  # You can adjust this based on your needs
+                max_tokens=500,  # You can adjust this based on your needs #######CHECKK THE NUMBER OF TOKENS
                 n = 10,  # Number of questions to generate
                 stop=None,
                 temperature=0.7  # You can adjust this for creativity
@@ -225,7 +225,40 @@ def quiz():
     "total_tokens": 4384
   }
 }
-
+    '''
+    titlePrompt = f"\n\n{text}\n create a concise title, that covers the whole provided article \n\n"
+    titleResponse = openai.Completion.create(
+                engine="gpt-3.5-turbo-instruct",
+                prompt=titlePrompt,
+                max_tokens=100,  # You can adjust this based on your needs
+                
+                stop=None,
+                temperature=0.7  # You can adjust this for creativity
+            )
+    
+    print(titleResponse)
+    '''
+    titleResponse = {
+    "id": "cmpl-8Lu1S3LRpWzwY9kDuuJ4jqJezioM9",
+    "object": "text_completion",
+    "created": 1700230930,
+    "model": "gpt-3.5-turbo-instruct",
+    "choices": [
+        {
+        "text": "\"Exploring the Challenges and Opportunities in Artificial Intelligence: Ethics, Employment, and Beyond\"",
+        "index": 0,
+        "logprobs": None,
+        "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 314,
+        "completion_tokens": 18,
+        "total_tokens": 332
+    }
+        }
+    cleaned_title = titleResponse['choices'][0]['text'][1:-1]
+    
     questions = []
 
     for i, item in enumerate(response["choices"]):
@@ -264,7 +297,7 @@ def quiz():
     for i in range(10):
         optionNumberOrder =  random.sample(range(0, 3), 3)
         optionsOrder.append(optionNumberOrder)
-    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder)
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder, title=cleaned_title)
 
 
 @app.route('/submit', methods=['GET'])
