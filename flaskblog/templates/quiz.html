@@ -36,6 +36,7 @@
             <input type="hidden" name="userAnswers" id="userAnswersInput">
             <input type="hidden" name="fromreattempt" id="fromreattemptInput" value="{{ fromreattempt }}">
             <input type="hidden" name="quizId" id="quizIdInput" value = "{{ quizId }}">
+            <input type="hidden" name="title" id="titleInput">
         </form>
     </div>
 
@@ -56,6 +57,10 @@
 
         var optionsOrder = {{ optionsOrder | tojson | safe }}; 
 
+        var title = {{ title | tojson | safe }};
+        console.log("Article Title:", title);
+
+
         // JavaScript code to work with questionsData
         console.log(questionsData); // For demonstration purposes
         
@@ -71,6 +76,7 @@
             document.getElementById('questionsDataInput').value = JSON.stringify(questionsData);
             document.getElementById('optionsOrderInput').value = JSON.stringify(optionsOrder);
             document.getElementById('userAnswersInput').value = JSON.stringify(userAnswers);
+            document.getElementById('titleInput').value = JSON.stringify(title);
 
             
         

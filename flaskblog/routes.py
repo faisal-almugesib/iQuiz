@@ -225,7 +225,40 @@ def quiz():
     "total_tokens": 4384
   }
 }
-
+    '''
+    titlePrompt = f"\n\n{text}\n create a concise title, that covers the whole provided article \n\n"
+    titleResponse = openai.Completion.create(
+                engine="gpt-3.5-turbo-instruct",
+                prompt=titlePrompt,
+                max_tokens=100,  # You can adjust this based on your needs
+                
+                stop=None,
+                temperature=0.7  # You can adjust this for creativity
+            )
+    
+    print(titleResponse)
+    '''
+    titleResponse = {
+    "id": "cmpl-8Lu1S3LRpWzwY9kDuuJ4jqJezioM9",
+    "object": "text_completion",
+    "created": 1700230930,
+    "model": "gpt-3.5-turbo-instruct",
+    "choices": [
+        {
+        "text": "\"Exploring the Challenges and Opportunities in Artificial Intelligence: Ethics, Employment, and Beyond\"",
+        "index": 0,
+        "logprobs": None,
+        "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 314,
+        "completion_tokens": 18,
+        "total_tokens": 332
+    }
+        }
+    cleaned_title = titleResponse['choices'][0]['text'][1:-1]
+    
     questions = []
 
     for i, item in enumerate(response["choices"]):
@@ -267,7 +300,7 @@ def quiz():
         optionsOrder.append(optionNumberOrder)
     
     fromreattempt= "False" 
-    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder, fromreattempt=fromreattempt)
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder,title=cleaned_title, fromreattempt=fromreattempt)
 
 
 @app.route('/submit', methods=['GET'])
@@ -319,6 +352,7 @@ def save():
     options_order = request.form.get('optionsOrder')
     user_answers = request.form.get('userAnswers')
     grade = request.form.get('grade')
+    title = request.form.get('title')
 
     # Parse the JSON data if needed
 
@@ -326,7 +360,7 @@ def save():
 
     user_id = current_user.id 
     
-    new_quiz = Quiz(name='still not define yet!', score=grade, user_id=user_id)    
+    new_quiz = Quiz(name=title, score=grade, user_id=user_id)    
     
     db.session.add(new_quiz)
     db.session.commit()

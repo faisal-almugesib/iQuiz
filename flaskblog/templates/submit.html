@@ -81,6 +81,8 @@
         <input type="hidden" name="optionsOrder" id="optionsOrderInput">
         <input type="hidden" name="userAnswers" id="userAnswersInput">
         <input type="hidden" name="grade" id="gradeInput">
+        <input type="hidden" name="title" id="titleInput">
+        <!-- I THINK WE HAVE TO PUT THE TITLE HERE WITH THE INPUTS I WILL DO IT LATER -->
     </form>
 
     <div id="questionCards" style="position: absolute;
@@ -96,7 +98,7 @@
         var questionsData;
         var userAnswers;
         var optionsOrder;
-       
+        var title;
         // Parse the query string
         const urlParams = new URLSearchParams(queryString);
 
@@ -104,7 +106,7 @@
         const questionsDataParam = urlParams.get("questionsData");
         const userAnswersParam = urlParams.get("userAnswers");
         const optionsOrderParam = urlParams.get("optionsOrder");
-        
+        const titleParam = urlParams.get("title");
 
         // Check if the parameters are not null and not empty strings
         if (
@@ -120,11 +122,13 @@
             userAnswers = JSON.parse(userAnswersParam);
             optionsOrder = JSON.parse(optionsOrderParam);
             quizId = JSON.parse(optionsOrderParam);
+            title = JSON.parse(titleParam);
 
             // Now, questionsData, userAnswers, and optionsOrder are arrays
             console.log("Questions Data:", questionsData);
             console.log("User Answers:", userAnswers);
             console.log("Options Order:", optionsOrder);
+            console.log("Article title:", title);
             
         } else {
             console.log("One or more of the parameters are missing or invalid.");
@@ -208,6 +212,7 @@
              document.getElementById('optionsOrderInput').value = JSON.stringify(optionsOrder);
              document.getElementById('userAnswersInput').value = JSON.stringify(userAnswers);
              document.getElementById('gradeInput').value = JSON.stringify(grade);
+             document.getElementById('titleInput').value = JSON.stringify(title);
  
              // After setting the values, you can now submit the form
              saveForm.submit();
