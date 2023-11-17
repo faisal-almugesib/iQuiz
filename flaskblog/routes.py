@@ -265,7 +265,9 @@ def quiz():
     for i in range(10):
         optionNumberOrder =  random.sample(range(0, 3), 3)
         optionsOrder.append(optionNumberOrder)
-    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder)
+    
+    fromreattempt= "1" 
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder, fromreattempt=fromreattempt)
 
 
 @app.route('/submit', methods=['GET'])
@@ -274,10 +276,15 @@ def submit():
     questions_data = request.form.get('questionsData')
     options_order = request.form.get('optionsOrder')
     user_answers = request.form.get('userAnswers')
+    from_reattempt = request.args.get('fromreattempt')
 
+    if(from_reattempt == "False"):
     # Parse the JSON data if needed
+        return render_template('submit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers)
     
-    return render_template('submit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers)
+    else:
+        return render_template('resubmit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers,from_reattempt=from_reattempt)
+        
 
 @app.route('/save', methods=['POST'])
 @login_required
@@ -313,7 +320,20 @@ def save():
 
     return redirect(url_for('history'))
 
+@app.route('/editQuizGrade', methods=['POST'])
+def editQuizGrade():
+    print('Request received.')
+    key1_value = request.form.get('key1')
+    key2_value = request.form.get('key2')
 
+    print(key1_value)
+    print(key2_value)
+
+    # Process and save data to the database (replace with your database logic)
+    # ...
+
+    # Return an empty response or a small piece of data (optional)
+    return ''
 
 @app.route("/summary", methods=['GET','POST'])
 @login_required
@@ -447,7 +467,7 @@ def reattempt():
         quiz_id = request.form.get('quizId')
         #quiz = Quiz.query.filter_by(id = quiz_id).first()
         questionss = Question.query.filter_by(quiz_id = quiz_id).all()
-        options = Choice.query.filter_by(question_id = 21).all()
+        #options = Choice.query.filter_by(question_id = 21).all()
     
         
         questions=[]
@@ -489,3 +509,25 @@ def deleteQuiz():
         flash('You are not authorized to delete this quiz.', 'danger')
 
     return redirect(url_for('history'))
+
+@app.route("/deleteSelectedQuizzes", methods=['POST'])
+@login_required
+def deleteSelectedQuizzes():
+    if request.method == 'POST':
+        selected_quiz_ids_str = request.form.get('selectedQuizIds')
+        
+        # Convert the string representation of the list to an actual list of integers
+        selected_quiz_ids = [int(quiz_id.strip('"')) for quiz_id in selected_quiz_ids_str.strip("[]").split(",")]
+
+        for quiz_id in selected_quiz_ids:
+            quiz = Quiz.query.get_or_404(quiz_id)
+            # Check if the logged-in user is the owner of the quiz
+            if current_user.id == quiz.user_id:
+                # Assuming cascade is set up correctly, deleting the quiz will delete associated questions and choices
+                db.session.delete(quiz)
+                db.session.commit()
+                flash('Quiz deleted successfully!', 'success')
+            else:
+                flash('You are not authorized to delete this quiz.', 'danger')
+    
+        return redirect(url_for('history'))

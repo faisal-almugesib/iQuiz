@@ -80,16 +80,22 @@
     {% extends "layout.html" %}
     {% block content %}
 
-    <script>document.addEventListener('click', function (event) {
-        if (event.target.classList.contains('clickable-option')) {
-            event.target.classList.toggle('blue-border');
-            event.target.classList.toggle('black-border');
-        }
+    <script>
+        document.addEventListener('change', function (event) {
+            if (event.target.type === 'checkbox' && event.target.name === 'checkbox[]') {
+                const card = event.target.closest('.exam');
+                card.style.border = event.target.checked ? '2px solid #007bff' : '2px solid #ccc';
+            }
+        });
 
- });
-</script>
- 
-
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('exam') && event.target.querySelector('input[type="checkbox"]')) {
+                const checkbox = event.target.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                event.target.style.border = checkbox.checked ? '2px solid #007bff' : '2px solid #ccc';
+            }
+        });
+    </script>
         
     
 
@@ -98,7 +104,7 @@
     <!-- ======= Hero Section ======= -->
     <section id="hero" class="d-flex align-items-center">
     
-        <div class="container d-flex flex-column align-items-center justify-content-center" data-aos="fade-up">
+        <div class="container d-flex flex-column align-items-center justify-content-center"> <!--this were added after the class it make the page lagging when entering(data-aos="fade-up")-->
         
         <h2 style = "position: absolute;
         top: 25%;

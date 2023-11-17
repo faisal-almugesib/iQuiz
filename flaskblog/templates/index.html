@@ -72,11 +72,16 @@
     <div class="container d-flex flex-column align-items-center justify-content-center" data-aos="fade-up">
       <h1>Welcome to iQuiz</h1>
       <h2>Write down your article and generate a quiz or summary for it :)</h2>
-
+      
       <div style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 10px; margin-bottom: 20px; width: 100%; height: 100px; overflow: auto;">
         <form class="text-center" method="POST" action="/add_article">
         <textarea id="articleText" name="articleText" placeholder="Your text here" style="border: none; width: 100%; height: 100%; resize: vertical;" oninput="checkWordCount();"></textarea>
         
+        <!--
+        <div style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 10px; margin-bottom: 20px; width: 100%; min-height: 100px;">
+          <form class="text-center" method="POST" action="/add_article">
+            <textarea id="articleText" name="articleText" placeholder="Your text here" style="border: none; width: 100%; height: auto; overflow: hidden;" oninput="checkWordCount();"></textarea>
+          -->
       </div>
       <div id="wordCountFeedback" style="color: red;"></div>
 

@@ -1,0 +1,233 @@
+{% extends "layout.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Quiz</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='quizStyles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+        .resultCard {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            margin: 20px; /* Added margin to separate cards */
+        }
+        .correctOption {
+            color: green;
+        }
+        .wrongOption {
+            color: red;
+        }
+        .resultOption {
+            display: block;
+            margin: 1px 0;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            
+            border: 2px solid transparent;
+            
+            /*
+            if it long remove the extended part and puts ...
+        
+            white-space: nowrap; /* Prevents line breaks in button text *
+            overflow: hidden; /* Hides overflowing text *
+            text-overflow: ellipsis; /* Adds ellipsis (...) to indicate text overflow *
+            max-width: 100%; /* Ensures the button doesn't exceed card width *
+            */
+        
+            
+            white-space: normal; /* Allow text to wrap to multiple lines */
+            word-wrap: break-word; /* Allow long words to break onto the next line */
+            max-width: 100%; /* Ensures the button doesn't exceed card width */
+            
+        }
+
+        
+        button[type="submit"] {
+            visibility:"";
+            background-color: #3b4ef8;;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0a22f6; 
+        }
+    </style>
+</head>
+<body>
+    <h1 class="question" id="grade" style="position: absolute;
+    top: 13%;
+    left: 43%;"></h1>
+    <!--
+    <form action = "/save" method = "POST" id="saveForm"  style="position: absolute;
+    top: 18%;
+    left: 46%;">
+    
+        <button type="submit" id="submit">Save Quiz</button>
+        
+        <input type="hidden" name="questionsData" id="questionsDataInput">
+        <input type="hidden" name="optionsOrder" id="optionsOrderInput">
+        <input type="hidden" name="userAnswers" id="userAnswersInput">
+        <input type="hidden" name="grade" id="gradeInput">
+    </form>
+-->
+    <div id="questionCards" style="position: absolute;
+    top: 23%;
+    left: 14%;"></div>
+
+
+    <script>
+        // Get the query string from the URL
+        const queryString = window.location.search;
+
+        var questionsData;
+        var userAnswers;
+        var optionsOrder;
+
+        // Parse the query string
+        const urlParams = new URLSearchParams(queryString);
+
+        // Get the "questionsData," "userAnswers," and "optionsOrder" parameters from the query string
+        const questionsDataParam = urlParams.get("questionsData");
+        const userAnswersParam = urlParams.get("userAnswers");
+        const optionsOrderParam = urlParams.get("optionsOrder");
+
+        // Check if the parameters are not null and not empty strings
+        if (
+            questionsDataParam !== null &&
+            questionsDataParam !== "" &&
+            userAnswersParam !== null &&
+            userAnswersParam !== "" &&
+            optionsOrderParam !== null &&
+            optionsOrderParam !== ""
+        ) {
+            // Parse the parameters as JSON to get arrays
+            questionsData = JSON.parse(questionsDataParam);
+            userAnswers = JSON.parse(userAnswersParam);
+            optionsOrder = JSON.parse(optionsOrderParam);
+
+            // Now, questionsData, userAnswers, and optionsOrder are arrays
+            console.log("Questions Data:", questionsData);
+            console.log("User Answers:", userAnswers);
+            console.log("Options Order:", optionsOrder);
+        } else {
+            console.log("One or more of the parameters are missing or invalid.");
+        }
+
+        var grade=0;
+
+        // Create question cards for each element in the "questionsData" array
+        const questionCards = document.getElementById("questionCards");
+
+        questionsData.forEach((question, index) => {
+            const card = document.createElement("div");
+            card.classList.add("resultCard");
+
+            const questionTitle = document.createElement("h1");
+            questionTitle.textContent = question.question;
+            card.appendChild(questionTitle);
+            var currentOptionsOrder = optionsOrder[index];
+            var options = [];
+            options.push(question.options[currentOptionsOrder[0]]);
+            options.push(question.options[currentOptionsOrder[1]]);
+            options.push(question.options[currentOptionsOrder[2]]);
+            var flagForCorrectAnswer=false;
+            if(options[userAnswers[index]-1] == question.options[0]){
+                flagForCorrectAnswer=true;
+                grade++;
+            }
+                
+            // Loop through the options and create input elements and buttons
+            options.forEach((option, optionIndex) => {
+                
+                const label = document.createElement("label");
+                const input = document.createElement("input");
+                input.type = "radio";
+                input.name = `answer${index}`;
+                
+                input.disabled = true;
+                const button = document.createElement("button");
+                button.classList.add("resultOption");
+                label.classList.add("resultOption");
+                button.type = "button";
+                button.textContent = option;
+
+                if (flagForCorrectAnswer && option == question.options[0]) {
+                    button.classList.add("correctOption");
+                }
+                else {
+                    if(option == question.options[0])
+                        button.classList.add("correctOption");
+                    if(option == options[userAnswers[index]-1])
+                    button.classList.add("wrongOption");
+                        
+
+                }
+
+                label.appendChild(input);
+                label.appendChild(button);
+
+                card.appendChild(label);
+            });
+
+            questionCards.appendChild(card);
+        });
+
+        // Now, you have created a card for each question in the "questionsData" array
+
+        var gradeElement = document.getElementById("grade");
+        gradeElement.textContent = `Your grade is ${grade}/10`
+
+
+         // Find the form element
+         const saveForm = document.getElementById('saveForm');
+
+         // Add an event listener to the form's submit event
+         saveForm.addEventListener('submit', function (event) {
+             // Prevent the submit event form from submitting immediately
+             
+ 
+             // Set the values of the hidden input fields
+             document.getElementById('questionsDataInput').value = JSON.stringify(questionsData);
+             document.getElementById('optionsOrderInput').value = JSON.stringify(optionsOrder);
+             document.getElementById('userAnswersInput').value = JSON.stringify(userAnswers);
+             document.getElementById('gradeInput').value = JSON.stringify(grade);
+ 
+             // After setting the values, you can now submit the form
+             saveForm.submit();
+         });
+
+        
+         $.ajax({
+            url: '/editQuizGrade',
+            data: new FormData({
+                key1: '{{ from_reattempt }}',
+                key2: grade,
+            }),
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function(response) {
+                console.log('Data saved successfully:', response);
+            },
+            error: function() {
+                console.error('Error saving data');
+            },
+        });
+        
+    </script>
+</body>
+{% endblock content %}
