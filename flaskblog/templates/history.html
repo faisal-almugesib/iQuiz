@@ -76,9 +76,14 @@
 </head>
 <body>
    
-    <div id="previousQuizzes" style="position: absolute;
-    top: 20%;
-    left: 25%;"></div>
+    <div id="quizzesAvailableMessage" style="display: none; position: absolute; top: 15%; left: 27%; width: 52%">
+        <h2>You can reattempt your saved quizzes, or select and delete them</h2>
+    </div>
+    
+    <!-- Container for the message when there are no quizzes -->
+    <div id="noQuizzesContainer" style="display: none; position: absolute; top: 15%; left: 22%;">
+        <h2 id="noQuizzesMessage"></h2>
+    </div>
 
 <form id="deleteForm" method="POST" action="/deleteSelectedQuizzes">
     <input type="hidden" name="selectedQuizIds" id="selectedQuizIdsInput">
@@ -164,7 +169,20 @@ function deleteSelectedQuizzes() {
 
 // Function to append quiz cards to the previousQuizzes div
 function appendQuizCards() {
-    const previousQuizzes = document.getElementById("previousQuizzes");
+    const previousQuizzes = document.getElementById("quizzesAvailableMessage");
+    const quizzesAvailableMessage = document.getElementById("quizzesAvailableMessage");
+    const noQuizzesContainer = document.getElementById("noQuizzesContainer");
+    const noQuizzesMessage = document.getElementById("noQuizzesMessage");
+
+    if (quizzesList.length === 0) {
+        // Display the 'no quizzes' message
+        noQuizzesMessage.textContent = "You don't have any previous quizzes, try to generate one on the home page :)";
+        noQuizzesContainer.style.display = "flex";
+        quizzesAvailableMessage.style.display = "none";
+    } else {
+        // Display the 'quizzes available' message and create quiz cards
+        quizzesAvailableMessage.style.display = "block";
+        noQuizzesContainer.style.display = "none";
 
     quizzesList.forEach((quiz, index) => {
         const quizCard = createQuizCard(quiz);
@@ -191,8 +209,8 @@ function appendQuizCards() {
             previousQuizzes.appendChild(quizCard);
         }
     });
+    }
 }
-
 /*// Function to append quiz cards to the previousQuizzes div
 function appendQuizCards() {
     const previousQuizzes = document.getElementById("previousQuizzes");
