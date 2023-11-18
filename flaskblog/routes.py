@@ -528,7 +528,7 @@ def reattempt():
         #quiz = Quiz.query.filter_by(id = quiz_id).first()
         questionss = Question.query.filter_by(quiz_id = quiz_id).all()
         #options = Choice.query.filter_by(question_id = 21).all()
-    
+        title = Quiz.query.get_or_404(quiz_id).name
         
         questions=[]
 
@@ -548,7 +548,7 @@ def reattempt():
     for i in range(10):
         optionNumberOrder =  random.sample(range(0, 3), 3)
         optionsOrder.append(optionNumberOrder)
-    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder, quizId=quiz_id)
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder, quizId=quiz_id, title=title)
     #return redirect(url_for('history'))
 
 @app.route("/deleteQuiz", methods=['POST'])
