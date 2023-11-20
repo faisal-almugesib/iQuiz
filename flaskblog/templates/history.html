@@ -1,0 +1,237 @@
+{% extends "layout.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Quiz</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='quizStyles.css') }}">
+    <style>
+        .resultCard {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            margin: 20px; /* Added margin to separate cards */
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .resultCard:hover {
+            transform: scale(0.95);
+            
+        }
+        
+        .name-margin {
+            margin-left: 20px; /* Add more margin between Grade and Reattempt button */
+        }
+        .space-between-grade-reattempt {
+            margin-left: 40px; /* Add more margin between Grade and Reattempt button */
+        }
+       
+        .reattempt-button {
+            background-color: #3b4ef8;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Hover style for the reattempt button */
+        .reattempt-button:hover {
+            background-color: #0a22f6;
+        }
+
+        .delete-button {
+            background-color: #dc3545; /* Use a red color for delete button */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Hover style for the delete button */
+        .delete-button:hover {
+            background-color: #bb2d3b; /* Darken the red color on hover */
+        }
+        #previousQuizzes {
+            position: absolute;
+            top: 20%;
+            left: 25%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        
+    </style>
+</head>
+<body>
+   
+    <div id="quizzesAvailableMessage" style="display: none; position: absolute; top: 15%; left: 27%; width: 52%">
+        <h2>You can reattempt your saved quizzes, or select and delete them</h2>
+    </div>
+    
+    <!-- Container for the message when there are no quizzes -->
+    <div id="noQuizzesContainer" style="display: none; position: absolute; top: 15%; left: 22%;">
+        <h2 id="noQuizzesMessage"></h2>
+    </div>
+
+<form id="deleteForm" method="POST" action="/deleteSelectedQuizzes">
+    <input type="hidden" name="selectedQuizIds" id="selectedQuizIdsInput">
+   
+</form>
+
+<script>
+const quizzesList = {{ quizzes | tojson | safe }};
+
+// Function to create a card for a quiz
+function createQuizCard(quiz) {
+    const card = document.createElement("div");
+    card.classList.add("resultCard");
+
+    const quizName = document.createElement("h1");
+    quizName.textContent = quiz.name;
+    //quizName.classList.add("name-margin");
+
+    const quizGrade = document.createElement("p");
+    quizGrade.textContent = `Grade: ${quiz.grade}`;
+
+    const reattemptButton = document.createElement("button");
+    reattemptButton.textContent = "Reattempt";
+    reattemptButton.classList.add("reattempt-button");
+    reattemptButton.classList.add("space-between-grade-reattempt");
+    reattemptButton.addEventListener("click", () => reattemptQuiz(quiz.id)); // Pass the quiz ID
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = "quizCheckbox";
+    checkbox.value = quiz.id;
+    checkbox.style.visibility = "hidden";
+
+    card.addEventListener("click", () => {
+        // Toggle the checkbox state
+        checkbox.checked = !checkbox.checked;
+
+        // Toggle the border color
+        card.style.border = checkbox.checked ? "2px solid #007bff" : "2px solid #ccc";
+    });
+
+    // Set display property to make the elements inside the card horizontal
+    [checkbox, quizName, quizGrade, reattemptButton].forEach((element) => {
+        element.style.display = "inline-block";
+        element.style.marginRight = "20px"; // Adjusted margin for more space
+        card.appendChild(element);
+    });
+
+    return card;
+}
+
+// Function to reattempt a quiz based on the quiz ID
+function reattemptQuiz(quizId) {
+    // Create and submit an individual form for reattempting the quiz
+    const form = document.createElement("form");
+    form.method = "POST"; // Use the appropriate method (POST or GET)
+    form.action = "/reattempt"; // Set the endpoint based on your route
+    document.body.appendChild(form);
+
+    // Create a hidden input field for the quiz ID
+    const quizIdInput = document.createElement("input");
+    quizIdInput.type = "hidden";
+    quizIdInput.name = "quizId";
+    quizIdInput.value = quizId;
+    form.appendChild(quizIdInput);
+
+    form.submit();
+}
+
+// Function to gather selected quiz IDs and submit the form
+function deleteSelectedQuizzes() {
+    const checkboxes = document.getElementsByName("quizCheckbox");
+    const selectedQuizIds = Array.from(checkboxes)
+        .filter((checkbox) => checkbox.checked)
+        .map((checkbox) => checkbox.value);
+
+    // Set the value of the hidden input field
+    document.getElementById("selectedQuizIdsInput").value = JSON.stringify(selectedQuizIds);
+
+    // Submit the form
+    document.getElementById("deleteForm").submit();
+}
+
+// Function to append quiz cards to the previousQuizzes div
+function appendQuizCards() {
+    const previousQuizzes = document.getElementById("quizzesAvailableMessage");
+    const quizzesAvailableMessage = document.getElementById("quizzesAvailableMessage");
+    const noQuizzesContainer = document.getElementById("noQuizzesContainer");
+    const noQuizzesMessage = document.getElementById("noQuizzesMessage");
+
+    if (quizzesList.length === 0) {
+        // Display the 'no quizzes' message
+        noQuizzesMessage.textContent = "You don't have any previous quizzes, try to generate one on the home page :)";
+        noQuizzesContainer.style.display = "flex";
+        quizzesAvailableMessage.style.display = "none";
+    } else {
+        // Display the 'quizzes available' message and create quiz cards
+        quizzesAvailableMessage.style.display = "block";
+        noQuizzesContainer.style.display = "none";
+
+    quizzesList.forEach((quiz, index) => {
+        const quizCard = createQuizCard(quiz);
+
+        // Check if it's the last quiz card
+        if (index === quizzesList.length - 1) {
+            // Create a wrapper div for both quiz cards and the delete button
+            const wrapperDiv = document.createElement("div");
+        
+            
+            // Add the quiz card and delete button inside the wrapper div
+            wrapperDiv.appendChild(quizCard);
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete Selected";
+            deleteButton.type = "button";
+            deleteButton.classList.add("delete-button");
+            deleteButton.addEventListener("click", deleteSelectedQuizzes);
+            wrapperDiv.appendChild(deleteButton);
+
+            // Append the wrapper div to the previousQuizzes div
+            previousQuizzes.appendChild(wrapperDiv);
+        } else {
+            // If it's not the last quiz card, append it directly to the previousQuizzes div
+            previousQuizzes.appendChild(quizCard);
+        }
+    });
+    }
+}
+/*// Function to append quiz cards to the previousQuizzes div
+function appendQuizCards() {
+    const previousQuizzes = document.getElementById("previousQuizzes");
+
+    quizzesList.forEach((quiz) => {
+        const quizCard = createQuizCard(quiz);
+        previousQuizzes.appendChild(quizCard);
+    });
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete Selected";
+    deleteButton.type = "button";
+    deleteButton.classList.add("delete-button");
+    deleteButton.addEventListener("click", deleteSelectedQuizzes);
+    previousQuizzes.appendChild(deleteButton);
+}
+*/
+// Call the function to append quiz cards when the page loads
+window.onload = appendQuizCards;
+</script>
+
+<!-- ... (Your existing code) ... -->
+</body>
+{% endblock content %}
+</html>

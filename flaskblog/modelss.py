@@ -36,6 +36,7 @@ class User(db.Model, UserMixin):
         #lazy='dynamic',
         #primaryjoin="User_exam_association.c.user_id == User.id",
     )
+    quizzes = db.relationship('Quiz', backref='owner', lazy=True)
 
     def __repr__(self):#how our object printed when we print them
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
@@ -57,6 +58,28 @@ class Article(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=True)
 
 
+class Quiz(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
+    #user = db.relationship('User', backref='user_quizzes', lazy=True)
+    #questions = db.relationship('Question', backref='quiz', lazy=True)
+    questions = db.relationship('Question', backref='quiz', cascade='all, delete-orphan')
+
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    #quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id', ondelete='CASCADE'), nullable=False)
+    #choices = db.relationship('Choice', backref='question', lazy=True)
+    choices = db.relationship('Choice', backref='question', cascade='all, delete-orphan')
+
+class Choice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    #question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id', ondelete='CASCADE'), nullable=False)
 
     
 

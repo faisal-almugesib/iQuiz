@@ -1,7 +1,7 @@
 from flask import render_template,url_for, flash, redirect, request
 from flaskblog import app
 from flaskblog.forms import RegistrationForm, LoginForm, DeleteForm, EditEmailForm, EditNameForm, ChangePassword, AddDateForm
-from flaskblog.modelss import User, Article, Exam, user_exam
+from flaskblog.modelss import User, Article, Exam, user_exam, Quiz, Question, Choice
 from flaskblog import db
 from flask_login import login_user, login_required, logout_user, current_user
 import json
@@ -225,7 +225,40 @@ def quiz():
     "total_tokens": 4384
   }
 }
-
+    '''
+    titlePrompt = f"\n\n{text}\n create a concise title, that covers the whole provided article \n\n"
+    titleResponse = openai.Completion.create(
+                engine="gpt-3.5-turbo-instruct",
+                prompt=titlePrompt,
+                max_tokens=100,  # You can adjust this based on your needs
+                
+                stop=None,
+                temperature=0.7  # You can adjust this for creativity
+            )
+    
+    print(titleResponse)
+    '''
+    titleResponse = {
+    "id": "cmpl-8Lu1S3LRpWzwY9kDuuJ4jqJezioM9",
+    "object": "text_completion",
+    "created": 1700230930,
+    "model": "gpt-3.5-turbo-instruct",
+    "choices": [
+        {
+        "text": "\"Exploring the Challenges and Opportunities in Artificial Intelligence: Ethics, Employment, and Beyond\"",
+        "index": 0,
+        "logprobs": None,
+        "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 314,
+        "completion_tokens": 18,
+        "total_tokens": 332
+    }
+        }
+    cleaned_title = titleResponse['choices'][0]['text'][1:-1]
+    
     questions = []
 
     for i, item in enumerate(response["choices"]):
@@ -260,25 +293,107 @@ def quiz():
             print(a)
         print("\n")
     '''
+    
     optionsOrder = []
     for i in range(10):
         optionNumberOrder =  random.sample(range(0, 3), 3)
         optionsOrder.append(optionNumberOrder)
-    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder)
+    
+    fromreattempt= "False" 
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder,title=cleaned_title, fromreattempt=fromreattempt)
 
 
 @app.route('/submit', methods=['GET'])
 @login_required
 def submit():
+    grade = 0
+    questions_data_json = request.args.get('questionsData')
+    options_order_json = request.args.get('optionsOrder')
+    user_answers_json = request.args.get('userAnswers')
+    from_reattempt = request.args.get('fromreattempt')
+    quizId = request.args.get('quizId')
+    
+    
+    # Initialize variables
+    questions_data = None
+    options_order = None
+    user_answers = None
+
+    # Parse JSON if the data is not None
+    if questions_data_json:
+        questions_data = json.loads(questions_data_json)
+    if options_order_json:
+        options_order = json.loads(options_order_json)
+    if user_answers_json:
+        user_answers = json.loads(user_answers_json)
+
+
+    if(from_reattempt == "False"):
+    # Parse the JSON data if needed
+        return render_template('submit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers)
+    
+    else:
+        for i in range(10):
+            user_answer = user_answers[i]
+            if user_answer is not None and user_answer != '':
+        # Convert user_answer to int and check if the answer is correct
+                if options_order[i][int(user_answer)-1] == 0:
+                    grade += 1
+        curQuiz = Quiz.query.filter_by(id=quizId).first()
+        curQuiz.score = grade
+        db.session.commit()
+        return render_template('resubmit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers,from_reattempt=from_reattempt)
+        
+
+@app.route('/save', methods=['POST'])
+@login_required
+def save():
     questions_data = request.form.get('questionsData')
     options_order = request.form.get('optionsOrder')
     user_answers = request.form.get('userAnswers')
+    grade = request.form.get('grade')
+    title = request.form.get('title')
 
     # Parse the JSON data if needed
+
+    questions_data = json.loads(questions_data)
+
+    user_id = current_user.id 
     
-    return render_template('submit.html', user=current_user, questions=questions_data, optionsOrder=options_order, answers=user_answers)
+    new_quiz = Quiz(name=title, score=grade, user_id=user_id)    
+    
+    db.session.add(new_quiz)
+    db.session.commit()
+    
+    quiz_id = new_quiz.id
+    #quiz = Quiz.query.order_by(Quiz.id.desc()).first()
+    for index, question in enumerate(questions_data):
+        new_question = Question(text=question['question'], quiz_id=quiz_id)
+        db.session.add(new_question)
+        db.session.commit()
+        question_id= new_question.id
+        for choice in question['options']:
+            new_choice = Choice(text=choice, question_id=question_id)
+            db.session.add(new_choice)
+            db.session.commit()
+        
 
+    return redirect(url_for('history'))
 
+@app.route('/editQuizGrade', methods=['POST'])
+def editQuizGrade():
+    print('Request received.')
+    key1_value = request.form.get('key1')
+    key2_value = request.form.get('key2')
+
+    print(key1_value)
+    print(key2_value)
+
+    # Process and save data to the database (replace with your database logic)
+    # ...
+
+    # Return an empty response or a small piece of data (optional)
+    return ''
 
 @app.route("/summary", methods=['GET','POST'])
 @login_required
@@ -388,3 +503,91 @@ def deleteExam():
     return redirect(url_for('calendar'))
 
 
+@app.route("/history", methods=['GET','POST'])
+@login_required
+def history():
+    
+    quizzes = Quiz.query.filter_by(user_id = current_user.id).all()
+
+    quizzeslist = []
+    for quiz in quizzes:
+        quizzeslist.append({
+                "id": quiz.id,
+                "name": quiz.name,
+                "grade": quiz.score
+            })
+
+    return render_template('history.html',quizzes = quizzeslist)
+
+
+@app.route("/reattempt", methods=['POST'])
+@login_required
+def reattempt():
+    if request.method == 'POST':
+        quiz_id = request.form.get('quizId')
+        #quiz = Quiz.query.filter_by(id = quiz_id).first()
+        questionss = Question.query.filter_by(quiz_id = quiz_id).all()
+        #options = Choice.query.filter_by(question_id = 21).all()
+        title = Quiz.query.get_or_404(quiz_id).name
+        
+        questions=[]
+
+        for question in questionss:
+            options = Choice.query.filter_by(question_id = question.id).all()
+            Choices=[]
+            for option in options:
+                Choices.append(option.text)
+            
+            questions.append({
+                "question": question.text,
+                "options": Choices
+            })    
+
+    
+    optionsOrder = []
+    for i in range(10):
+        optionNumberOrder =  random.sample(range(0, 3), 3)
+        optionsOrder.append(optionNumberOrder)
+    return render_template('quiz.html', user=current_user, questions=questions, optionsOrder=optionsOrder, quizId=quiz_id, title=title)
+    #return redirect(url_for('history'))
+
+@app.route("/deleteQuiz", methods=['POST'])
+@login_required
+def deleteQuiz():
+    if request.method == 'POST':
+        quiz_id = request.form.get('quizId')
+
+    quiz = Quiz.query.get_or_404(quiz_id)
+
+    # Check if the logged-in user is the owner of the quiz
+    if current_user.id == quiz.user_id:
+        # Assuming cascade is set up correctly, deleting the quiz will delete associated questions and choices
+        db.session.delete(quiz)
+        db.session.commit()
+        flash('Quiz deleted successfully!', 'success')
+    else:
+        flash('You are not authorized to delete this quiz.', 'danger')
+
+    return redirect(url_for('history'))
+
+@app.route("/deleteSelectedQuizzes", methods=['POST'])
+@login_required
+def deleteSelectedQuizzes():
+    if request.method == 'POST':
+        selected_quiz_ids_str = request.form.get('selectedQuizIds')
+        
+        # Convert the string representation of the list to an actual list of integers
+        selected_quiz_ids = [int(quiz_id.strip('"')) for quiz_id in selected_quiz_ids_str.strip("[]").split(",")]
+
+        for quiz_id in selected_quiz_ids:
+            quiz = Quiz.query.get_or_404(quiz_id)
+            # Check if the logged-in user is the owner of the quiz
+            if current_user.id == quiz.user_id:
+                # Assuming cascade is set up correctly, deleting the quiz will delete associated questions and choices
+                db.session.delete(quiz)
+                db.session.commit()
+                flash('Quiz deleted successfully!', 'success')
+            else:
+                flash('You are not authorized to delete this quiz.', 'danger')
+    
+        return redirect(url_for('history'))
