@@ -66,10 +66,30 @@
 {% extends "layout.html" %}
 {% block content %}
 
+
   <!-- ======= Hero Section ======= -->
   <section id="hero" class="d-flex align-items-center">
+    
 
     <div class="container d-flex flex-column align-items-center justify-content-center" data-aos="fade-up">
+      <main role="main" class="container">
+        <div >
+          <div >
+      
+            {%with messages = get_flashed_messages(with_categories=true)%}
+              {%if messages %}
+                {%for category, message in messages %}
+                  <div class="alert alert-{{ category }}">
+                    {{ message }}
+                  </div>
+                {%endfor%}
+              {%endif%}
+            {%endwith%}
+           
+          </div>
+          
+        </div>
+      </main>
       <h1>Welcome to iQuiz</h1>
       <h2>Write down your article and generate a quiz or summary for it :)</h2>
       
@@ -106,3 +126,4 @@
 </html>
 
 {%endblock content%}
+{% block flash %}{% endblock flash %}

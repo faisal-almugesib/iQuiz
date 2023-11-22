@@ -75,8 +75,31 @@
     </style>
 </head>
 <body>
-   
-    <div id="quizzesAvailableMessage" style="display: none; position: absolute; top: 15%; left: 27%; width: 52%">
+    {% block nav %}
+          <li><a class="nav-link scrollto" href="/">Home</a></li>
+          <li><a class="nav-link scrollto active" href="/history">History</a></li>
+          <li><a class="nav-link scrollto" href="/calendar">Scheduler</a></li>
+          <li><a class="nav-link scrollto " href="/account">Account</a></li>
+          {% endblock nav %}
+    <main role="main" class="container" style="position: absolute; top: 12%; left: 27%; width: 52%">
+        <div >
+          <div >
+      
+            {%with messages = get_flashed_messages(with_categories=true)%}
+              {%if messages %}
+                {%for category, message in messages %}
+                  <div class="alert alert-{{ category }}">
+                    {{ message }}
+                  </div>
+                {%endfor%}
+              {%endif%}
+            {%endwith%}
+           
+          </div>
+          
+        </div>
+      </main>
+    <div id="quizzesAvailableMessage" style="display: none; position: absolute; top: 21%; left: 27%; width: 52%">
         <h2>You can reattempt your saved quizzes, or select and delete them</h2>
     </div>
     
@@ -234,4 +257,5 @@ window.onload = appendQuizCards;
 <!-- ... (Your existing code) ... -->
 </body>
 {% endblock content %}
+{% block flash %}{% endblock flash %}
 </html>

@@ -2,6 +2,22 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='quizStyles.css') }}">
     
     <style>
+        button[type="submit"] {
+            background-color: #dc3545; /* Use a red color for delete button */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Hover style for the delete button */
+        button[type="submit"]:hover {
+            background-color: #bb2d3b; /* Darken the red color on hover */
+        }
+
         .blue-border {
             border-color: #007bff;
             outline: none;
@@ -78,6 +94,12 @@
     
     <!-- ======= Header ======= -->
     {% extends "layout.html" %}
+    {% block nav %}
+          <li><a class="nav-link scrollto" href="/">Home</a></li>
+          <li><a class="nav-link scrollto" href="/history">History</a></li>
+          <li><a class="nav-link scrollto active" href="/calendar">Scheduler</a></li>
+          <li><a class="nav-link scrollto " href="/account">Account</a></li>
+        {% endblock nav %}
     {% block content %}
 
     <script>
@@ -105,26 +127,45 @@
     <section id="hero" class="d-flex align-items-center">
     
         <div class="container d-flex flex-column align-items-center justify-content-center"> <!--this were added after the class it make the page lagging when entering(data-aos="fade-up")-->
-        
+           
+            <main role="main" class="container" style="position: absolute; top: 3%; left: 30%; width: 40%">
+                <div >
+                  <div >
+              
+                    {%with messages = get_flashed_messages(with_categories=true)%}
+                      {%if messages %}
+                        {%for category, message in messages %}
+                          <div class="alert alert-{{ category }}">
+                            {{ message }}
+                          </div>
+                        {%endfor%}
+                      {%endif%}
+                    {%endwith%}
+                   
+                  </div>
+                  
+                </div>
+              </main>
+
         <h2 style = "position: absolute;
-        top: 25%;
-        left: 50%;">You can add an exam date or check any upcoming one</h2>
+        top: 20%;
+        left: 30%;">You can add an exam date or check any upcoming one</h2>
     
         
         <input type="hidden" id="button_id" name="button_id" value="">
         <div class="button-container">
             <a href="/addDate">
                 <button type="submit" id="generateQuizButton" class="btn-get-started scrollto " style="outline: none; display: block;position: absolute;
-                top: 30%;
-                left: 50%;" >Add an exam date</button>
+                top: 25%;
+                left:41.7%;" >Add an exam date</button>
             </a>
             
                         <label for="deleteExam-1">
 
 
             <div class = "exam-list" style = "position: absolute;
-            top: 40%;
-            left: 50%;">
+            top: 35%;
+            left: 32%;">
                 <div class="question">Upcoming Exams</div>
                 {% if not exams %}
                     You don't have any upcoming exams
@@ -169,7 +210,7 @@
                     {% endif %}
                 {% endfor %}
                 
-                <button type="submit" id="deleteExamsButton">Delete exams</button>
+                <button type="submit" id="deleteExamsButton" class="delete-button" style="margin-top: 10px;">Delete exams</button>
             
             </form>
             </div>
@@ -193,7 +234,7 @@
         
         </div>
         
-        <img src="static/assets/img/hero-img.png" class="img-fluid hero-img" alt="" data-aos="zoom-in" data-aos-delay="150">
+        
         </div>
     
     </section><!-- End Hero -->
@@ -207,3 +248,4 @@
     </html>
     
     {%endblock content%}
+    {% block flash %}{% endblock flash %}

@@ -1,7 +1,27 @@
 {% extends "layout.html" %}
+{% block nav %}
+          <li><a class="nav-link scrollto" href="/">Home</a></li>
+          <li><a class="nav-link scrollto" href="/history">History</a></li>
+          <li><a class="nav-link scrollto" href="/calendar">Scheduler</a></li>
+          <li><a class="nav-link scrollto active" href="/account">Account</a></li>
+        {% endblock nav %}
 {% block content %}
 
 <script>
+  window.onload = function() {
+    // Get the elements by their IDs
+    const element1 = document.getElementById('editNameBtn');
+    const element2 = document.getElementById('editEmailBtn');
+    const element3 = document.getElementById('editPasswordBtn');
+  
+    // Change the colors of the elements
+    element1.disabled = true;
+    element2.disabled = true;
+    element3.disabled = true;
+    element1.style.backgroundColor = '#dddddd';
+    element2.style.backgroundColor = '#dddddd';
+    element3.style.backgroundColor = '#dddddd';
+  };
   function confirmDelete() {
     var result = confirm("Are you sure you want to delete your account? \nThis process cannot be undone!");
     return result;
@@ -21,8 +41,8 @@
 
     if (input && button) {
       button.disabled = !input.value.trim();
-      button.style.backgroundColor = button.disabled ? '#dddddd' : '#dc3545';
-      button.style.borderColor = button.disabled ? '#dddddd' : '#dc3545';
+      button.style.backgroundColor = button.disabled ? '#dddddd' : '#3b4ef8';
+      button.style.borderColor = button.disabled ? '#dddddd' : '#3b4ef8';
     }
   }
 </script>
@@ -63,7 +83,7 @@
                   {{ form1.hidden_tag() }}
                   <div class="d-flex align-items-center justify-content-between">
                     {{ form1.username(id="username",class="form-control form-control-lg", placeholder="Enter your new username", oninput="enableButton('editNameBtn', 'username')") }}
-                    {{ form1.submit(id="editNameBtn", class="btn btn-danger", disabled=True) }}
+                    {{ form1.submit(id="editNameBtn", class="btn btn-danger", style="margin-left:5px", disabled=True) }}
                   </div>
                   
                 </form>
@@ -76,7 +96,7 @@
                   {{ form2.hidden_tag() }}
                   <div class="d-flex align-items-center justify-content-between">
                     {{ form2.email(class="form-control form-control-lg", placeholder="Enter your new email", oninput="enableButton('editEmailBtn', 'email')") }}
-                    {{ form2.submit(id="editEmailBtn", class="btn btn-danger", disabled=True) }}
+                    {{ form2.submit(id="editEmailBtn", class="btn btn-danger", style="margin-left:5px", disabled=True) }}
                   </div>
                   
                 </form>
@@ -97,7 +117,7 @@
                   <div class="d-flex align-items-center justify-content-between">
                     
                   {{ form3.confirm_newpassword(class="form-control form-control-lg", placeholder="Confirm the new password", oninput="enableButton('editPasswordBtn', 'confirm_newpassword')") }}
-                  {{ form3.submit(id="editPasswordBtn", class="btn btn-danger", disabled=True) }}
+                  {{ form3.submit(id="editPasswordBtn", class="btn btn-danger", style="margin-left:5px", disabled=True) }}
                   </div>
                   
                 </form>
@@ -130,6 +150,7 @@
     </div>
     
     <style>
+      
       .form-group-container {
         display: flex;
         justify-content: space-between;
@@ -148,16 +169,22 @@
     
       .btn-danger {
         color: #fff;
+        border: none;
         background-color: #dc3545;
         border-color: #dc3545;
         padding: 10px 20px;
         font-size: 16px;
       }
 
-      .btn-success {
+      .btn-edit {
         color: #fff;
-        background-color: #28a745;
-        border-color: #28a745;
+        background-color: #3b4ef8;
+        border-color: #3b4ef8;
+        border: none;
+        
+        border-radius: 4px;
+        cursor: pointer;
+        
         padding: 10px 20px;
         font-size: 16px;
       }
@@ -167,9 +194,9 @@
         border-color: #bd2130;
       }
 
-      .btn-success:hover {
-        background-color: #218838;
-        border-color: #218838;
+      .btn-edit:hover {
+        background-color: #0a22f6;
+        border-color: #0a22f6;
       }
     </style>
 

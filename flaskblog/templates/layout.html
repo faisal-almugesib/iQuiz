@@ -53,11 +53,12 @@
 
       <nav id="navbar" class="navbar">
         <ul>
+          {% block nav %}
           <li><a class="nav-link scrollto active" href="/">Home</a></li>
           <li><a class="nav-link scrollto" href="/history">History</a></li>
           <li><a class="nav-link scrollto" href="/calendar">Scheduler</a></li>
           <li><a class="nav-link scrollto " href="/account">Account</a></li>
-          
+          {% endblock %}
           <li><a class="getstarted scrollto" href="/logout">Log out</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
