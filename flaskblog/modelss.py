@@ -36,7 +36,10 @@ class User(db.Model, UserMixin):
         #lazy='dynamic',
         #primaryjoin="User_exam_association.c.user_id == User.id",
     )
-    quizzes = db.relationship('Quiz', backref='owner', lazy=True)
+    #quizzes = db.relationship('Quiz', backref='owner', lazy=True)
+    ##below is the new code added with the new edit account so that the user when deleting his account it will delete his quizzes also if it make any problems please return to the above
+    quizzes = db.relationship('Quiz', backref='owner', lazy=True, cascade='all, delete-orphan')
+
 
     def __repr__(self):#how our object printed when we print them
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
@@ -62,7 +65,10 @@ class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     score = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
+    #user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False) 
+    #below is the new code added with the new edit account so that the user when deleting his account it will delete his quizzes also if it make any problems please return to the above
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id', ondelete='CASCADE'), nullable=False)
+
     #user = db.relationship('User', backref='user_quizzes', lazy=True)
     #questions = db.relationship('Question', backref='quiz', lazy=True)
     questions = db.relationship('Question', backref='quiz', cascade='all, delete-orphan')
