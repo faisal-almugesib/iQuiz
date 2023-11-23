@@ -95,9 +95,9 @@ def login():
                 login_user(user, remember=True) # work like the session or cookie it make user status to login and remember it until he logout or flask server restart
                 return redirect(url_for('home'))
             else:
-                flash('Incorrect password, try again', 'danger')
+                flash('User does not exist.', 'danger')
         else:
-            flash('Username does not exist.', 'danger')
+            flash('User does not exist.', 'danger')
     return render_template('login.html',title='Login', form=form, user=current_user)
 
 
@@ -107,7 +107,56 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-
+@app.route("/account", methods=['GET','POST'])
+@login_required
+def account():
+    form = DeleteForm()
+    form1 = EditNameForm()
+    form2 = EditEmailForm()
+    form3 = ChangePassword()
+    if form1.validate_on_submit():
+        user = User.query.filter_by(username=current_user.username).first()
+        user1 = User.query.filter_by(username=form1.username.data).first()
+        
+        if user1:
+            flash('Username already exist', 'danger')
+        else:
+            user.username = form1.username.data
+            db.session.commit()
+            flash('Your Username has been Changed !', 'success')
+    if form2.validate_on_submit():
+        user1 = User.query.filter_by(email=form2.email.data).first()
+        
+        if user1:
+            flash('Email already exist', 'danger')
+        else:
+            user = User.query.filter_by(email=current_user.email).first()
+            user.email = form2.email.data
+            db.session.commit()
+            flash('Your Email has been Changed !', 'success')
+    if form3.validate_on_submit():
+        if current_user.password == form3.oldpassword.data:
+            if form3.newpassword.data == form3.confirm_newpassword.data:
+                user = User.query.filter_by(username=current_user.username).first()
+                user.password = form3.newpassword.data
+                db.session.commit()
+                flash('Your password has been Changed !', 'success')
+            else:
+                flash('The confirm new password doesn\'t match the new password , try again', 'danger')
+        else:
+            flash('Incorrect password, try again', 'danger')
+    if form.validate_on_submit():
+        if current_user.password == form.password.data:
+            flash('Your account has been Deleted !', 'success')
+            user = User.query.filter_by(username=current_user.username).first()
+            db.session.delete(user)
+            db.session.commit()
+            #logout_user()
+            return redirect(url_for('register'))
+        else:
+            flash('Incorrect password, try again', 'danger')
+    return render_template('newaccount.html', form = form, form1 = form1, form2 = form2, form3 = form3, user=current_user) 
+'''
 @app.route("/account", methods=['GET','POST'])
 @login_required
 def account():
@@ -180,7 +229,7 @@ def account():
 
 
     return render_template('account.html',title='Account', form = form, form1 = form1, form2 = form2, form3 = form3, user = current_user)
-
+'''
 
 @app.route("/quiz", methods=['GET','POST'])
 @login_required

@@ -1,5 +1,177 @@
 <!DOCTYPE html>
 <html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Krub:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        .divider:after,
+    .divider:before {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #eee;
+    }
+
+    .h-custom {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 450px) {
+        .h-custom {
+            height: 100%;
+        }
+    }
+
+    /* Custom CSS to align the "Don't have an account? Register" link */
+    .register-link {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .btn-outline-info {
+        background-color: #3b4ef8;
+        color: #fff;
+        border-color: #3b4ef8;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .btn-outline-info:hover {
+        background-color: #0a22f6;
+        border-color: #0a22f6;
+    }
+    .font-color-p{
+        color:#0a22f6;
+    }
+    </style>
+    
+</head>
+
+<body>
+
+    <section class="h-custom">
+        <div class="col-md-8 col-lg-6 col-xl-4">
+            <div class="card">
+                <div class="container">
+                    <h1 class="logo font-color-p mb-5">iQuiz</h1>
+                    <!--to print error massage if the information is wrong-->
+                    <main role="main" class="container">
+                        <div class="row">
+                            {%with messages = get_flashed_messages(with_categories=true)%}
+                            {%if messages %}
+                            {%for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                            {%endfor%}
+                            {%endif%}
+                            {%endwith%}
+                            
+                        </div>
+                    </main>
+
+                    <form class="text-center" method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Email input -->
+                        <div class="mb-3">
+                            {% if form.username.errors %}
+                                {{ form.username(class="form-control form-control-lg is-invalid", placeholder="Enter your username") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.username(class="form-control form-control-lg", placeholder="Enter your username") }}
+                            {% endif %}
+                        </div>
+
+                        <!-- Password input -->
+                        <div class="mb-3">
+                            {% if form.password.errors %}
+                                {{ form.password(class="form-control form-control-lg is-invalid", placeholder="Enter your password") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.password(class="form-control form-control-lg", placeholder="Enter your password") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.submit(class="btn btn-outline-info") }}
+                        </div>
+                    </form>
+
+                    <!-- Register link -->
+                    <div class="register-link">
+                        <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="register" class="link-danger">Register</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Right -->
+    <div>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#!" class="text-white me-4">
+            <i class="fab fa-google"></i>
+        </a>
+        <a href="#!" class="text-white">
+            <i class="fab fa-linkedin-in"></i>
+        </a>
+    </div>
+    <!-- Right -->
+
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
@@ -44,7 +216,7 @@
           <div class = "container">
                 
             
-            <!--to print error massage if the information is wrong-->
+            
             <main role="main" class="container">
                 <div class="row">
                   
@@ -68,7 +240,7 @@
                     <form class="text-center" method="POST">
                         {{ form.hidden_tag() }}
 
-                        <!-- Email input -->
+                        
                         <div class="mb-3">
                             {% if form.username.errors %}
                                 {{ form.username(class="form-control form-control-lg is-invalid", placeholder="Enter your username") }}
@@ -82,7 +254,7 @@
                             {% endif %}
                         </div>
 
-                        <!-- Password input -->
+                        
                         <div class="mb-3">
                             {% if form.password.errors %}
                                 {{ form.password(class="form-control form-control-lg is-invalid", placeholder="Enter your password") }}
@@ -101,14 +273,14 @@
                         </div>
                     </form>
 
-                    <!-- Register link -->
+                    
                     <div class="register-link">
                         <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="register" class="link-danger">Register</a></p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Right -->
+       
         <div>
             <a href="#!" class="text-white me-4">
                 <i class="fab fa-facebook-f"></i>
@@ -123,9 +295,9 @@
                 <i class="fab fa-linkedin-in"></i>
             </a>
         </div>
-        <!-- Right -->
+        
     </div>
 </section>
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
-</html>
+</html>-->

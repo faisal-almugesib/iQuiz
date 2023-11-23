@@ -53,11 +53,12 @@
 
       <nav id="navbar" class="navbar">
         <ul>
+          {% block nav %}
           <li><a class="nav-link scrollto active" href="/">Home</a></li>
           <li><a class="nav-link scrollto" href="/history">History</a></li>
           <li><a class="nav-link scrollto" href="/calendar">Scheduler</a></li>
           <li><a class="nav-link scrollto " href="/account">Account</a></li>
-          
+          {% endblock %}
           <li><a class="getstarted scrollto" href="/logout">Log out</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
@@ -67,7 +68,7 @@
   </header><!-- End Header -->
   {% block content %}{% endblock %}
 
-    <main role="main" class="container">
+  {% block flash %}<main role="main" class="container">
   <div class="row">
     <div class="col-md-8">
 
@@ -85,7 +86,7 @@
     
   </div>
 </main>
-
+{% endblock %}
   
 
 

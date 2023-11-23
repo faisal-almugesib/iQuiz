@@ -42,17 +42,52 @@
         color: #fff;
         border-color: #3b4ef8;
     }
+    .btn-add {
+        background-color: #3b4ef8;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        border-color: #3b4ef8;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .btn-add:hover {
+        background-color: #0a22f6;
+        border-color: #0a22f6;
+    }
     
     </style>
     </head>
     
-    <body>
+    <body style="background-color: #f4f4f4;">
     
       <!-- ======= Header ======= -->
     {% extends "layout.html" %}
     {% block content %}
-    <br><br><br><br><br>
+    <br><br><br><br>
       <!-- ======= Hero Section ======= -->
+      <main role="main" class="container" style="margin-bottom: 25px;">
+        <div >
+          <div >
+      
+            {%with messages = get_flashed_messages(with_categories=true)%}
+              {%if messages %}
+                {%for category, message in messages %}
+                  <div class="alert alert-{{ category }}">
+                    {{ message }}
+                  </div>
+                {%endfor%}
+              {%endif%}
+            {%endwith%}
+           
+          </div>
+          
+        </div>
+      </main>
+
       <form class="text-center" method="POST">
         {{ form.hidden_tag() }}
     
@@ -85,7 +120,7 @@
         
     
         <div class="mb-3">
-            {{ form.addDate(class="btn btn-outline-info", style="margin-left: 10px") }}
+            {{ form.addDate(class="btn-add", style="margin-left: 10px") }}
         </div>
     </form>
     
@@ -96,3 +131,4 @@
     </html>
     
     {%endblock content%}
+    {% block flash %}{% endblock flash %}

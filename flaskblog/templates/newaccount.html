@@ -1,0 +1,237 @@
+{% extends "layout.html" %}
+{% block nav %}
+          <li><a class="nav-link scrollto" href="/">Home</a></li>
+          <li><a class="nav-link scrollto" href="/history">History</a></li>
+          <li><a class="nav-link scrollto" href="/calendar">Scheduler</a></li>
+          <li><a class="nav-link scrollto active" href="/account">Account</a></li>
+        {% endblock nav %}
+{% block content %}
+
+<script>
+  window.onload = function() {
+    // Get the elements by their IDs
+    const element1 = document.getElementById('editNameBtn');
+    const element2 = document.getElementById('editEmailBtn');
+    const element3 = document.getElementById('editPasswordBtn');
+  
+    // Change the colors of the elements
+    element1.disabled = true;
+    element2.disabled = true;
+    element3.disabled = true;
+    element1.style.backgroundColor = '#dddddd';
+    element2.style.backgroundColor = '#dddddd';
+    element3.style.backgroundColor = '#dddddd';
+  };
+  function confirmDelete() {
+    var result = confirm("Are you sure you want to delete your account? \nThis process cannot be undone!");
+    return result;
+  }
+
+  function promptForPassword() {
+    var password = prompt("Please enter your password to confirm deletion:");
+    if (password !== null) {
+      document.getElementById("passwordForDelete").value = password;
+      document.getElementById("deleteAccountBtn").click();
+    }
+  }
+
+  function enableButton(buttonId, inputId) {
+    var button = document.getElementById(buttonId);
+    var input = document.getElementById(inputId);
+
+    if (input && button) {
+      button.disabled = !input.value.trim();
+      button.style.backgroundColor = button.disabled ? '#dddddd' : '#3b4ef8';
+      button.style.borderColor = button.disabled ? '#dddddd' : '#3b4ef8';
+    }
+  }
+</script>
+
+<br><br>
+<br>
+<div class="container light-style flex-grow-1 container-p-y text-center">
+  <br>
+  <main role="main" class="container">
+    <div class="row">
+        {%with messages = get_flashed_messages(with_categories=true)%}
+        {%if messages %}
+        {%for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {%endfor%}
+        {%endif%}
+        {%endwith%}
+        
+    </div>
+</main>
+  <h4 class="font-weight-bold py-3 mb-4">
+    Account settings
+  </h4>
+  
+  <div class="card overflow-hidden mx-auto" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border: none;">
+    <div class="row no-gutters row-bordered row-border-light">
+
+      <div class="col-md-9 mx-auto">
+        <div class="tab-content">
+          <div class="tab-pane fade active show" id="account-general">
+            <hr class="border-light m-0">
+            <div class="card-body text-center">
+              <!-- Edit Name Form -->
+              <div class="form-group text-left">
+                <h5 style="color: #3b4ef8;"><label class="form-label">Current Username: {{ user.username }}</label></h5>
+                <form class="text-center" method="POST">
+                  {{ form1.hidden_tag() }}
+                  <div class="d-flex align-items-center justify-content-between">
+                    {{ form1.username(id="username",class="form-control form-control-lg", placeholder="Enter your new username", oninput="enableButton('editNameBtn', 'username')") }}
+                    {{ form1.submit(id="editNameBtn", class="btn btn-danger", style="margin-left:5px", disabled=True) }}
+                  </div>
+                  
+                </form>
+              </div>
+
+              <!-- Edit Email Form -->
+              <div class="form-group text-left" style="margin-top: 25px;">
+                <h5 style="color: #3b4ef8;"><label class="form-label">Current Email: {{ user.email }}</label></h5>
+                <form id="usernameForm" class="text-center" method="POST">
+                  {{ form2.hidden_tag() }}
+                  <div class="d-flex align-items-center justify-content-between">
+                    {{ form2.email(class="form-control form-control-lg", placeholder="Enter your new email", oninput="enableButton('editEmailBtn', 'email')") }}
+                    {{ form2.submit(id="editEmailBtn", class="btn btn-danger", style="margin-left:5px", disabled=True) }}
+                  </div>
+                  
+                </form>
+              </div>
+
+              <!-- Change Password Form -->
+              <div class="form-group text-left" style="margin-top: 25px;">
+                <h5 style="color: #3b4ef8;"><label class="form-label">Change Password</label></h5>
+                <form class="text-center" method="POST">
+                  {{ form3.hidden_tag() }}
+                  <div class="form-group text-center">
+                    {{ form3.oldpassword(class="form-control form-control-lg", placeholder="Enter your password", oninput="enableButton('editPasswordBtn', 'oldpassword')") }}
+                  </div>
+                  <div class="form-group text-center">
+                    {{ form3.newpassword(class="form-control form-control-lg", placeholder="Enter your new password", oninput="enableButton('editPasswordBtn', 'newpassword')") }}
+                  </div>
+                  
+                  <div class="d-flex align-items-center justify-content-between">
+                    
+                  {{ form3.confirm_newpassword(class="form-control form-control-lg", placeholder="Confirm the new password", oninput="enableButton('editPasswordBtn', 'confirm_newpassword')") }}
+                  {{ form3.submit(id="editPasswordBtn", class="btn btn-danger", style="margin-left:5px", disabled=True) }}
+                  </div>
+                  
+                </form>
+              </div>
+
+              <!-- Delete Account Form -->
+              <div class="form-group text-center">
+                
+                <div class="form-group text-center">
+                  <button type="button" class="btn btn-danger" style="margin-top: 25px;" onclick="promptForPassword()">Delete Account</button>
+                </div>
+                <form class="text-center" method="POST" style="display: none;">
+                  {{ form.hidden_tag() }}
+                  <input type="hidden" id="passwordForDelete" name="password" value="">
+                  <div class="form-group text-center">
+                    <button type="submit" id="deleteAccountBtn" class="btn btn-danger" style="margin-top: 10px; display: none;"></button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Save Changes Button 
+              <div class="form-group text-center">
+                <button type="button" id="saveChangesBtn" class="btn btn-success" style="margin-top: 10px;" onclick="saveChanges()">Save Changes</button>
+              </div>-->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      
+      .form-group-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+    
+      .form-group {
+        flex-basis: 48%;
+        margin-bottom: 10px;
+      }
+    
+      .form-control-lg {
+        padding: 12px;
+        font-size: 16px;
+      }
+    
+      .btn-danger {
+        color: #fff;
+        border: none;
+        background-color: #dc3545;
+        border-color: #dc3545;
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+
+      .btn-edit {
+        color: #fff;
+        background-color: #3b4ef8;
+        border-color: #3b4ef8;
+        border: none;
+        
+        border-radius: 4px;
+        cursor: pointer;
+        
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+    
+      .btn-danger:hover {
+        background-color: #bd2130;
+        border-color: #bd2130;
+      }
+
+      .btn-edit:hover {
+        background-color: #0a22f6;
+        border-color: #0a22f6;
+      }
+      body {
+        background-color: #f4f4f4;
+    }
+    </style>
+
+    <!-- <script>
+      function saveChanges() {
+        
+        var button1 = document.getElementById('editNameBtn');
+        var button2 = document.getElementById('editEmailBtn');
+        var button3 = document.getElementById('editPasswordBtn');
+        var input1 = document.getElementById('username');
+        var input2 = document.getElementById('email');
+        var form = document.getElementById('usernameForm');
+          // All forms are valid, proceed with submission
+          if (input1){
+          // Submit the Edit Name Form
+          //document.getElementById("editNameBtn").click();
+          form.submit();
+          }
+          /*if (input2){
+            // Submit the Edit Name Form
+            document.getElementById("editEmailBtn").click();
+            }
+            /*if (!button3.disabled){
+              // Submit the Edit Name Form
+              document.getElementById("editPasswordBtn").click();
+              }*/
+        
+      }
+    
+    </script> -->
+    
+    
+{% block flash %}{% endblock flash %}
+  {% endblock content %}

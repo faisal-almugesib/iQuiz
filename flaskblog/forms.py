@@ -66,9 +66,9 @@ class ChangePassword(FlaskForm):
                             validators=[DataRequired()])
     
     confirm_newpassword =PasswordField('Confirm Password',
-                            validators=[DataRequired(), EqualTo('newpassword')])
+                            validators=[DataRequired()])
     
-    submit =SubmitField('Change')
+    submit =SubmitField('Edit')
 
 '''
 def validate_date(form, field):
