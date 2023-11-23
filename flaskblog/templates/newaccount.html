@@ -50,10 +50,7 @@
 <br><br>
 <br>
 <div class="container light-style flex-grow-1 container-p-y text-center">
-
-  <h4 class="font-weight-bold py-3 mb-4">
-    Account settings
-  </h4>
+  <br>
   <main role="main" class="container">
     <div class="row">
         {%with messages = get_flashed_messages(with_categories=true)%}
@@ -68,6 +65,10 @@
         
     </div>
 </main>
+  <h4 class="font-weight-bold py-3 mb-4">
+    Account settings
+  </h4>
+  
   <div class="card overflow-hidden mx-auto" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border: none;">
     <div class="row no-gutters row-bordered row-border-light">
 
@@ -78,7 +79,7 @@
             <div class="card-body text-center">
               <!-- Edit Name Form -->
               <div class="form-group text-left">
-                <label class="form-label">Current Username: {{ user.username }}</label>
+                <h5 style="color: #3b4ef8;"><label class="form-label">Current Username: {{ user.username }}</label></h5>
                 <form class="text-center" method="POST">
                   {{ form1.hidden_tag() }}
                   <div class="d-flex align-items-center justify-content-between">
@@ -91,7 +92,7 @@
 
               <!-- Edit Email Form -->
               <div class="form-group text-left" style="margin-top: 25px;">
-                <label class="form-label">Current Email: {{ user.email }}</label>
+                <h5 style="color: #3b4ef8;"><label class="form-label">Current Email: {{ user.email }}</label></h5>
                 <form id="usernameForm" class="text-center" method="POST">
                   {{ form2.hidden_tag() }}
                   <div class="d-flex align-items-center justify-content-between">
@@ -104,7 +105,7 @@
 
               <!-- Change Password Form -->
               <div class="form-group text-left" style="margin-top: 25px;">
-                <label class="form-label">Change Password</label>
+                <h5 style="color: #3b4ef8;"><label class="form-label">Change Password</label></h5>
                 <form class="text-center" method="POST">
                   {{ form3.hidden_tag() }}
                   <div class="form-group text-center">
@@ -198,6 +199,9 @@
         background-color: #0a22f6;
         border-color: #0a22f6;
       }
+      body {
+        background-color: #f4f4f4;
+    }
     </style>
 
     <!-- <script>

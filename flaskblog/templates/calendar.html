@@ -14,9 +14,7 @@
         }
         
         /* Hover style for the delete button */
-        button[type="submit"]:hover {
-            background-color: #bb2d3b; /* Darken the red color on hover */
-        }
+       
 
         .blue-border {
             border-color: #007bff;
@@ -85,12 +83,24 @@
             border-color: #000;
             
         }
+        .position-exam{
+            position: absolute;
+            top: 35%;
+            left: 41.8%;
+
+        }
+        .position-no-exam{
+            position: absolute;
+            top: 35%;
+            left: 39.7%;
+
+        }
         
 
     </style>
     </head>
     
-    <body>
+    <body style="background-color: #f4f4f4;">
     
     <!-- ======= Header ======= -->
     {% extends "layout.html" %}
@@ -101,20 +111,46 @@
           <li><a class="nav-link scrollto " href="/account">Account</a></li>
         {% endblock nav %}
     {% block content %}
-
     <script>
+        window.onload = function() {
+            // Get the delete button by its ID
+            const deleteExamsButton = document.getElementById('deleteExamsButton');
+    
+            // Disable the delete button and set its background color
+            deleteExamsButton.disabled = true;
+            deleteExamsButton.style.backgroundColor = '#dddddd';
+        };
+    
+        function updateDeleteButtonState() {
+            const deleteExamsButton = document.getElementById('deleteExamsButton');
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][name="checkbox[]"]');
+            const checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+    
+            // Enable the button if at least one checkbox is checked, disable otherwise
+            deleteExamsButton.disabled = checkedCheckboxes.length === 0;
+    
+            // Change the button color based on its state
+            deleteExamsButton.style.backgroundColor = deleteExamsButton.disabled ? '#dddddd' : '#dc3545';
+        }
+    
         document.addEventListener('change', function (event) {
             if (event.target.type === 'checkbox' && event.target.name === 'checkbox[]') {
                 const card = event.target.closest('.exam');
                 card.style.border = event.target.checked ? '2px solid #007bff' : '2px solid #ccc';
+    
+                // Update the delete button state
+                updateDeleteButtonState();
             }
         });
-
+    
         document.addEventListener('click', function (event) {
             if (event.target.classList.contains('exam') && event.target.querySelector('input[type="checkbox"]')) {
                 const checkbox = event.target.querySelector('input[type="checkbox"]');
                 checkbox.checked = !checkbox.checked;
                 event.target.style.border = checkbox.checked ? '2px solid #007bff' : '2px solid #ccc';
+    
+                // Update the delete button state
+                updateDeleteButtonState();
             }
         });
     </script>
@@ -124,7 +160,7 @@
 
     
     <!-- ======= Hero Section ======= -->
-    <section id="hero" class="d-flex align-items-center">
+    <section id="hero" class="d-flex align-items-center" style="background-color: #f4f4f4;border: none;">
     
         <div class="container d-flex flex-column align-items-center justify-content-center"> <!--this were added after the class it make the page lagging when entering(data-aos="fade-up")-->
            
@@ -146,10 +182,10 @@
                   
                 </div>
               </main>
-
-        <h2 style = "position: absolute;
-        top: 20%;
-        left: 30%;">You can add an exam date or check any upcoming one</h2>
+              
+        <h4 style = "position: absolute;
+        top: 23%;
+        left: 30%;" class="font-weight-bold">You can add an exam date or check any upcoming one</h4>
     
         
         <input type="hidden" id="button_id" name="button_id" value="">
@@ -163,12 +199,15 @@
                         <label for="deleteExam-1">
 
 
-            <div class = "exam-list" style = "position: absolute;
-            top: 35%;
-            left: 32%;">
+            <div id="pos" class = "exam-list" class="position-exam">
                 <div class="question">Upcoming Exams</div>
                 {% if not exams %}
                     You don't have any upcoming exams
+                    <script>
+                        const examstyle = document.getElementById("pos")
+                        examstyle.classList.remove("position-exam");
+                        examstyle.classList.add("position-no-exam");
+                    </script>
                 {% endif %}
                 
                 <form action="/deleteExam" method="POST">
@@ -176,9 +215,14 @@
                     {% for exam in exams %}
                     {% set remaining_days = (exam.date - current_date).days  %}
                     {% if remaining_days >= 0 %}
+                    <script>
+                        const examstylee = document.getElementById("pos")
+                        examstylee.classList.add("position-exam");
+                        examstylee.classList.remove("position-no-exam");
+                    </script>
                     
                     <label for="{{exam.id}}" onclick="">
-                    <div class="exam clickable-option" onclick="toggleBlueBorder(this)">
+                    <div class="exam clickable-option" onclick="toggleBlueBorder(this)" style="background-color: #fff;">
                         <input type="checkbox" name="checkbox[]" value="{{exam.id}}" id="{{exam.id}}">
                         
                         
@@ -191,11 +235,13 @@
                             
                                 {% if remaining_days == 0 %}
                                 <div style="color:red;">
-                                    Today is your exam good luck!
+                                    Today is your exam! 
+                                    <br>
+                                    good luck
                                 </div>
                                 {% elif remaining_days == 1 %}
                                 <div style="color:orange;">
-                                    Tomorrow is your exam, practice some quizzes in our home page!
+                                    Tomorrow is your exam!
                                 </div>
                                 {% elif remaining_days == 2 %}
                                 <div >
@@ -210,7 +256,7 @@
                     {% endif %}
                 {% endfor %}
                 
-                <button type="submit" id="deleteExamsButton" class="delete-button" style="margin-top: 10px;">Delete exams</button>
+                <button type="submit" id="deleteExamsButton" class="delete-button" style="margin-top: 10px;">Delete selected exams</button>
             
             </form>
             </div>

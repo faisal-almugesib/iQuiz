@@ -1,5 +1,12 @@
 {% extends "layout.html" %}
+{% block nav %}
+          <li><a class="nav-link scrollto" href="/">Home</a></li>
+          <li><a class="nav-link scrollto active" href="/history">History</a></li>
+          <li><a class="nav-link scrollto" href="/calendar">Scheduler</a></li>
+          <li><a class="nav-link scrollto " href="/account">Account</a></li>
+          {% endblock nav %}
 {% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,6 +62,7 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s ease, color 0.3s ease;
+            margin-left: 300px;
         }
         
         /* Hover style for the delete button */
@@ -74,14 +82,10 @@
         
     </style>
 </head>
-<body>
-    {% block nav %}
-          <li><a class="nav-link scrollto" href="/">Home</a></li>
-          <li><a class="nav-link scrollto active" href="/history">History</a></li>
-          <li><a class="nav-link scrollto" href="/calendar">Scheduler</a></li>
-          <li><a class="nav-link scrollto " href="/account">Account</a></li>
-          {% endblock nav %}
-    <main role="main" class="container" style="position: absolute; top: 12%; left: 27%; width: 52%">
+
+<body style="background-color: #f4f4f4;">
+    
+    <main role="main" class="container" style="position: absolute; top: 12%; left: 23%; width: 52%">
         <div >
           <div >
       
@@ -99,13 +103,13 @@
           
         </div>
       </main>
-    <div id="quizzesAvailableMessage" style="display: none; position: absolute; top: 21%; left: 27%; width: 52%">
-        <h2>You can reattempt your saved quizzes, or select and delete them</h2>
+    <div id="quizzesAvailableMessage" style="display: none; position: absolute; top: 21%; left: 23%; width: 52%">
+        <h4 class="font-weight-bold" style="margin-left: 19px;">You can reattempt your saved quizzes, or select and delete them</h4>
     </div>
     
     <!-- Container for the message when there are no quizzes -->
-    <div id="noQuizzesContainer" style="display: none; position: absolute; top: 15%; left: 22%;">
-        <h2 id="noQuizzesMessage"></h2>
+    <div id="noQuizzesContainer" style="display: none; position: absolute; top: 21%; left: 20%;">
+        <h4 class="font-weight-bold" id="noQuizzesMessage"></h4>
     </div>
 
 <form id="deleteForm" method="POST" action="/deleteSelectedQuizzes">
@@ -189,7 +193,22 @@ function deleteSelectedQuizzes() {
     // Submit the form
     document.getElementById("deleteForm").submit();
 }
+function updateDeleteButtonState() {
+    const checkboxes = document.getElementsByName("quizCheckbox");
+    const selectedQuizIds = Array.from(checkboxes).filter((checkbox) => checkbox.checked);
 
+    const deleteButton = document.getElementById("deleteButton"); // Assuming your delete button has an ID
+
+    if (selectedQuizIds.length === 0) {
+        // No checkboxes are checked, disable the delete button and change its color to gray
+        deleteButton.disabled = true;
+        deleteButton.style.backgroundColor = '#dddddd';
+    } else {
+        // Some checkboxes are checked, enable the delete button and change its color to red
+        deleteButton.disabled = false;
+        deleteButton.style.backgroundColor = '#dc3545';
+    }
+}
 // Function to append quiz cards to the previousQuizzes div
 function appendQuizCards() {
     const previousQuizzes = document.getElementById("quizzesAvailableMessage");
@@ -219,9 +238,10 @@ function appendQuizCards() {
             // Add the quiz card and delete button inside the wrapper div
             wrapperDiv.appendChild(quizCard);
             const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete Selected";
+            deleteButton.textContent = "Delete selected quizzes";
             deleteButton.type = "button";
             deleteButton.classList.add("delete-button");
+            deleteButton.id = "deleteButton"
             deleteButton.addEventListener("click", deleteSelectedQuizzes);
             wrapperDiv.appendChild(deleteButton);
 
@@ -232,6 +252,9 @@ function appendQuizCards() {
             previousQuizzes.appendChild(quizCard);
         }
     });
+    updateDeleteButtonState();
+    document.addEventListener('click', updateDeleteButtonState);
+
     }
 }
 /*// Function to append quiz cards to the previousQuizzes div
