@@ -41,7 +41,7 @@ The repository includes a .env.example file which serves as a template. Here's h
 After setting up your .env file with your OpenAI API key, you're all set to run the project locally!
 
 ## Getting Started
-- Visit 
+- Visit https://iquizme-bb70eb102536.herokuapp.com/
 - Sign up for a free account.
 - Begin by submitting your first article.
 
