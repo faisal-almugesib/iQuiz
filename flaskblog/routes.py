@@ -593,7 +593,7 @@ def reattempt():
             options = Choice.query.filter_by(question_id = question.id).all()
             Choices=[]
             for option in options:
-                Choices.append(option.text[2:])
+                Choices.append(option.text[1:])
             
             questions.append({
                 "question": question.text,
