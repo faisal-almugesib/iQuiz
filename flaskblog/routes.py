@@ -1,3 +1,4 @@
+import os
 from flask import render_template,url_for, flash, redirect, request
 from flaskblog import app
 from flaskblog.forms import RegistrationForm, LoginForm, DeleteForm, EditEmailForm, EditNameForm, ChangePassword, AddDateForm
@@ -235,15 +236,15 @@ def account():
 @login_required
 def quiz():
 
-    openai.api_key = "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"
+    openai.api_key = os.getenv('OPENAI_API_KEY')
 
     text = request.args.get('article')
     text = text.strip()
 
     prompt = f"\n\n{text}\nGenerate 10 multiple choice questions that covers the whole provided article and exactly 3 answers choices based on the following article:: number of the question. the question that covers the article.\n a) choice A \n b) choice B \n c) choice C. "
 
-    '''
-    WE WILL USE READY RESPONSE FOR TESTING
+    
+    
     response = openai.Completion.create(
                 engine="text-davinci-002",
                 prompt=prompt,
@@ -253,6 +254,7 @@ def quiz():
                 temperature=0.7  # You can adjust this for creativity
             )
     '''
+    WE WILL USE READY RESPONSE FOR TESTING
     response = {
   "warning": "This model version is deprecated. Migrate before January 4, 2024 to avoid disruption of service. Learn more https://platform.openai.com/docs/deprecations",
   "id": "cmpl-8E7LGA8XOQINqDzGqN9fH7HEuByPY",
@@ -274,7 +276,8 @@ def quiz():
     "total_tokens": 4384
   }
 }
-    '''
+'''
+    
     titlePrompt = f"\n\n{text}\n create a concise title, that covers the whole provided article \n\n"
     titleResponse = openai.Completion.create(
                 engine="gpt-3.5-turbo-instruct",
@@ -285,7 +288,7 @@ def quiz():
                 temperature=0.7  # You can adjust this for creativity
             )
     
-    print(titleResponse)
+    #print(titleResponse)
     '''
     titleResponse = {
     "id": "cmpl-8Lu1S3LRpWzwY9kDuuJ4jqJezioM9",
@@ -306,11 +309,14 @@ def quiz():
         "total_tokens": 332
     }
         }
+        '''
     cleaned_title = titleResponse['choices'][0]['text'][1:-1]
     
     questions = []
 
     for i, item in enumerate(response["choices"]):
+        if(i==1):
+            break
         text = item["text"].strip().split('\n')
         cleaned_text = [line.strip() for line in text if line.strip()]
 
@@ -323,6 +329,8 @@ def quiz():
             question_text = cleaned_text[j]
 
             answer_options = cleaned_text[j + 1:j + 4]
+            for i, answer in enumerate(answer_options):
+                answer_options[i]=answer[2:]
 
             questions.append({
                 "question": question_text,
@@ -447,7 +455,7 @@ def editQuizGrade():
 @app.route("/summary", methods=['GET','POST'])
 @login_required
 def summary():
-    openai.api_key = "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"
+    openai.api_key = os.getenv('OPENAI_API_KEY')
 
     text = request.args.get('article')
     text = text.strip()
