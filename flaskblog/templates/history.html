@@ -187,11 +187,25 @@ function deleteSelectedQuizzes() {
         .filter((checkbox) => checkbox.checked)
         .map((checkbox) => checkbox.value);
 
-    // Set the value of the hidden input field
-    document.getElementById("selectedQuizIdsInput").value = JSON.stringify(selectedQuizIds);
+    // Check if any quizzes are selected
+    if (selectedQuizIds.length === 0) {
+        alert("Please select at least one quiz to delete.");
+        return;
+    }
 
-    // Submit the form
-    document.getElementById("deleteForm").submit();
+    // Show confirmation dialog
+    const isConfirmed = confirm("Are you sure you want to delete the selected quizzes?");
+    if (isConfirmed) {
+        // User confirmed, proceed with deletion
+        // Set the value of the hidden input field
+        document.getElementById("selectedQuizIdsInput").value = JSON.stringify(selectedQuizIds);
+
+        // Submit the form
+        document.getElementById("deleteForm").submit();
+    } else {
+        // User cancelled, do nothing
+        console.log("Deletion cancelled by the user.");
+    }
 }
 function updateDeleteButtonState() {
     const checkboxes = document.getElementsByName("quizCheckbox");
